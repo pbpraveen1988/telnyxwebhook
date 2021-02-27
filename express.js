@@ -71,7 +71,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     console.log('TRANSFERRING THE CALL');
 
     const { data: call1 } = await telnyx.calls.create({
-      connection_id: 'uuid',
+      
       to: '+18327141518',
       from: event.data.payload.from,
       webhook_url: 'http://206.81.2.172:5000/incoming3'
