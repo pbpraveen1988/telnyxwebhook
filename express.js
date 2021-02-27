@@ -18,7 +18,7 @@ const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
 const telnyx = Telnyx(apiKey);
 
-app.post('/receiveincoming', bodyParser.json(), function (req, res) {
+app.post('/receiveincoming', bodyParser.json(),async function (req, res) {
   var event;
 
   try {
