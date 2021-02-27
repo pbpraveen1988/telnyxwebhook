@@ -18,7 +18,7 @@ const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
 const telnyx = Telnyx(apiKey);
 
-app.post('/webhooks', bodyParser.json(), function(req, res) {
+app.post('/receiveincoming', bodyParser.json(), function (req, res) {
   var event;
 
   try {
@@ -48,34 +48,41 @@ app.post('/webhooks', bodyParser.json(), function(req, res) {
    * first we listen for an initiation event and then answer the call
    */
   if (event.data.event_type === 'call.initiated') {
+    console.log()
     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
-    const call = new telnyx.Call({call_control_id: event.data.payload.call_control_id});
+    const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
     call.answer();
   }
   if (event.data.event_type === 'call.answered') {
     console.log('Call Answered. Gather audio with the call control id: ' + event.data.payload.call_control_id);
 
-    const call = new telnyx.Call({call_control_id: event.data.payload.call_control_id});
+    const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
-    call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
+    console.log('TRANSFERRING THE CALL');
+    call.transfer({ to: '+18327141518' });
+    //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
   }
+
+  if (event.data.event_type === 'call.transferred') {
+    console.log('CALL TRANSFERRED');
+  }
+
   if (event.data.event_type === 'call.gather.ended') {
     console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
 
-    const call = new telnyx.Call({call_control_id: event.data.payload.call_control_id});
+    const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
     call.hangup();
   }
   if (event.data.event_type === 'call.hangup') {
     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
   }
-
   // Event was 'constructed', so we can respond with a 200 OK
   res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
-app.listen(3000, function() {
-  console.log('Example app listening on port 3000!');
+app.listen(5000, function () {
+  console.log('Example app listening on port 5000!');
 });
