@@ -18,7 +18,7 @@ const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
 const telnyx = Telnyx(apiKey);
 
-app.post('/receiveincoming', bodyParser.json(),async function (req, res) {
+app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
   var event;
 
   try {
@@ -75,6 +75,7 @@ app.post('/receiveincoming', bodyParser.json(),async function (req, res) {
       to: '+18327141518',
       from: event.data.payload.from
     });
+    console.log('EVENT CALL1', call1);
     call1.bridge({ call_control_id: event.data.payload.call_control_id });
     // call.transfer({ to: '+18327141518' });
 
