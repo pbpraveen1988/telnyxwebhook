@@ -48,7 +48,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
    * first we listen for an initiation event and then answer the call
    */
   if (event.data.event_type === 'call.initiated') {
-    console.log(event.data);
+    //console.log(event.data);
     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
@@ -139,7 +139,7 @@ app.post('/incoming3', bodyParser.json(), async function (req, res) {
    * first we listen for an initiation event and then answer the call
    */
   if (event.data.event_type === 'call.initiated') {
-    console.log(event.data);
+    //console.log(event.data);
     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
@@ -150,7 +150,7 @@ app.post('/incoming3', bodyParser.json(), async function (req, res) {
 
     // const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
-    console.log('TRANSFERRING THE CALL');
+    console.log('CALL ANSWERED');
 
     // const { data: call1 } = await telnyx.calls.create({
     //   connection_id: 'uuid',
@@ -160,7 +160,7 @@ app.post('/incoming3', bodyParser.json(), async function (req, res) {
     // });
     // console.log('EVENT CALL1', call1);
     // call1.bridge({ call_control_id: event.data.payload.call_control_id });
-    call.transfer({ to: '+18327141518' });
+   // call.transfer({ to: '+18327141518' });
 
     // call.transfer({ to: '+18327141518' });
     //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
