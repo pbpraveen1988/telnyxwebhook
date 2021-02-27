@@ -59,9 +59,9 @@ app.post('/receiveincoming', bodyParser.json(), function (req, res) {
     //   from: event.data.payload.from
     // });
     // call1.bridge({ call_control_id: event.data.payload.call_control_id });
-    call.transfer({ to: '+18327141518' });
+    // call.transfer({ to: '+18327141518' });
 
-    // call.answer();
+    call.answer();
   }
   if (event.data.event_type === 'call.answered') {
     console.log('Call Answered. Gather audio with the call control id: ' + event.data.payload.call_control_id);
@@ -69,7 +69,16 @@ app.post('/receiveincoming', bodyParser.json(), function (req, res) {
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
     console.log('TRANSFERRING THE CALL');
-   // call.transfer({ to: '+18327141518' });
+
+    const { data: call1 } = await telnyx.calls.create({
+      connection_id: 'uuid',
+      to: '+18327141518',
+      from: event.data.payload.from
+    });
+    call1.bridge({ call_control_id: event.data.payload.call_control_id });
+    // call.transfer({ to: '+18327141518' });
+
+    // call.transfer({ to: '+18327141518' });
     //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
   }
 
