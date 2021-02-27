@@ -1,0 +1,18 @@
+{
+  "name": "telnyxwebhook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "TELNYX_API_KEY=KEY017428C01D4C703E58AE8E6605CB258C_djaPqOCFKcTrm49ROfo54e node index.js",
+    "start-express": "TELNYX_API_KEY=KEY017428C01D4C703E58AE8E6605CB258C_djaPqOCFKcTrm49ROfo54e TELNYX_PUBLIC_KEY=02Gedq88T/zKMKHapjMEsMJf3m5CCRaHaPF1EtbFs2c= node express.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "morgan": "^1.8.1",
+    "telnyx": "^1.11.0"
+  }
+}
