@@ -82,7 +82,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     //   from: event.data.payload.from,
     //   webhook_url: 'http://206.81.2.172:5000/incoming3'
     // });
-    console.log('EVENT CALL1', call1);
+    console.log('EVENT CALL1');
     //call1.bridge({ call_control_id: event.data.payload.call_control_id });
     // call.transfer({ to: '+18327141518' });
 
