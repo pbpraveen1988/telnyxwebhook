@@ -48,7 +48,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
    * first we listen for an initiation event and then answer the call
    */
   if (event.data.event_type === 'call.initiated') {
-    //console.log(event.data);
+    console.log(event.data);
     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
