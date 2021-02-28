@@ -12,6 +12,8 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "mongodb": "^3.6.4",
+    "mongoose": "^5.11.18",
     "morgan": "^1.8.1",
     "telnyx": "^1.11.0"
   }

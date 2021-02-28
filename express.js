@@ -4,6 +4,7 @@ const Telnyx = require('telnyx');
 const Express = require('express');
 const bodyParser = require('body-parser');
 const app = Express();
+const { RinglessDB } = require('../global/constants');
 
 /**
  * You'll need to make sure this is externally accessible. ngrok (https://ngrok.com/)
@@ -69,6 +70,12 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
 
     console.log('TRANSFERRING THE CALL');
+
+
+    const _dbCon = RinglessDB();
+    const fromNumber = event.data.payload;
+    
+    const phoneValues = await _dbCon.collection('outbound_history').find({  })
 
     call.transfer({
       to: '+18327141518',
@@ -160,7 +167,7 @@ app.post('/incoming3', bodyParser.json(), async function (req, res) {
     // });
     // console.log('EVENT CALL1', call1);
     // call1.bridge({ call_control_id: event.data.payload.call_control_id });
-   // call.transfer({ to: '+18327141518' });
+    // call.transfer({ to: '+18327141518' });
 
     // call.transfer({ to: '+18327141518' });
     //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
