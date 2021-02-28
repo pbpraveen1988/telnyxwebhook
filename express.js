@@ -4,7 +4,7 @@ const Telnyx = require('telnyx');
 const Express = require('express');
 const bodyParser = require('body-parser');
 const app = Express();
-const { RinglessDB } = require('../global/constants');
+const { RinglessDB } = require('./global/constants');
 const db_connect = require("./tools/db-connect");
 /**
  * You'll need to make sure this is externally accessible. ngrok (https://ngrok.com/)
@@ -202,6 +202,6 @@ db_connect
     app.listen(5000, function () {
       console.log('Example app listening on port 5000!');
     });
-    
+
   });
 
