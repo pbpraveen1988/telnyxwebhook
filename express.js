@@ -78,17 +78,15 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     _fromNumber = _fromNumber.substr(_fromNumber.length - 10);
     console.log('AFTER SPLICE', _fromNumber);
     const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
-
     console.log('COLLECTION VALUE => ', _phoneValues);
-
     const _phoneValue = _phoneValues[_phoneValues.length - 1];
     console.log('Single VALUE => ', _phoneValue);
 
-    // call.transfer({
-    //   to: '+18327141518',
-    //   from: event.data.payload.from,
-    //   webhook_url: 'http://206.81.2.172:5000/incoming3'
-    // });
+    call.transfer({
+      to: `+1${_phoneValue}`,
+      from: event.data.payload.from,
+      webhook_url: 'http://206.81.2.172:5000/incoming3'
+    });
 
     // const { data: call1 } = await telnyx.calls.create({
     //   connection_id:'uuid',
