@@ -81,12 +81,16 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     console.log('COLLECTION VALUE => ', _phoneValues);
     const _phoneValue = _phoneValues[_phoneValues.length - 1];
     console.log('Single VALUE => ', _phoneValue);
+    if (_phoneValue && _phoneValue.forward) {
+      call.transfer({
+        to: `+1${_phoneValue.forward}`,
+        from: event.data.payload.from,
+        webhook_url: 'http://157.245.219.158:5000/incoming3'
+      });
+    }else 
+    {
 
-    call.transfer({
-      to: `+1${_phoneValue}`,
-      from: event.data.payload.from,
-      webhook_url: 'http://206.81.2.172:5000/incoming3'
-    });
+    }
 
     // const { data: call1 } = await telnyx.calls.create({
     //   connection_id:'uuid',
