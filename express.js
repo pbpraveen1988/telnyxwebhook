@@ -5,7 +5,7 @@ const Express = require('express');
 const bodyParser = require('body-parser');
 const app = Express();
 const { RinglessDB } = require('../global/constants');
-
+const db_connect = require("./tools/db-connect");
 /**
  * You'll need to make sure this is externally accessible. ngrok (https://ngrok.com/)
  * makes this really easy.
@@ -73,9 +73,14 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
 
 
     const _dbCon = RinglessDB();
-    const fromNumber = event.data.payload;
-    
-    const phoneValues = await _dbCon.collection('outbound_history').find({  })
+    const _fromNumber = event.data.payload.from;
+
+    const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: fromNumber.toString() }).toArray();
+
+    console.log('COLLECTION VALUE => ', _phoneValues);
+
+    const _phoneValue = _phoneValues[_phoneValues.length - 1];
+    console.log('Single VALUE => ', _phoneValue);
 
     call.transfer({
       to: '+18327141518',
@@ -191,7 +196,12 @@ app.post('/incoming3', bodyParser.json(), async function (req, res) {
   res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
+db_connect
+  .DBConnectMongoose()
+  .then((dbInfo) => {
+    app.listen(5000, function () {
+      console.log('Example app listening on port 5000!');
+    });
+    
+  });
 
-app.listen(5000, function () {
-  console.log('Example app listening on port 5000!');
-});
