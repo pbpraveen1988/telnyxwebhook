@@ -76,6 +76,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
     let _fromNumber = event.data.payload.from;
     console.log(_fromNumber);
     _fromNumber = _fromNumber.substring(0,1);
+    console.log('AFTER SPLICE',_fromNumber);
     const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
 
     console.log('COLLECTION VALUE => ', _phoneValues);
