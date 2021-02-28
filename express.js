@@ -49,7 +49,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
    * first we listen for an initiation event and then answer the call
    */
   if (event.data.event_type === 'call.initiated') {
-    //console.log(event.data);
+    console.log(event.data);
     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
@@ -73,9 +73,10 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
 
 
     const _dbCon = RinglessDB();
-    const _fromNumber = event.data.payload.from;
-
-    const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: fromNumber.toString() }).toArray();
+    let _fromNumber = event.data.payload.from;
+    console.log(_fromNumber);
+    _fromNumber = _fromNumber.substring(0,1);
+    const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
 
     console.log('COLLECTION VALUE => ', _phoneValues);
 
