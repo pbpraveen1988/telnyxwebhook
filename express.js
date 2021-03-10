@@ -5,6 +5,7 @@ const Express = require('express');
 const logger = require("morgan");
 const bodyParser = require('body-parser');
 const app = Express();
+const fs = require('fs');
 const { RinglessDB } = require('./global/constants');
 const db_connect = require("./tools/db-connect");
 const log4js = require('log4js');
@@ -171,7 +172,7 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
   }
   if (event.data.event_type === 'call.hangup') {
     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
-    
+
   }
   // Event was 'constructed', so we can respond with a 200 OK
   res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
