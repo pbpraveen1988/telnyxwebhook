@@ -9,6 +9,7 @@ const fs = require('fs');
 const { RinglessDB } = require('./global/constants');
 const db_connect = require("./tools/db-connect");
 const log4js = require('log4js');
+const path = require('path');
 
 log4js.configure({
   appenders: {
