@@ -13,7 +13,7 @@ const path = require('path');
 
 
 //const IVRRECEIVEURL3 = "http://138.68.245.156:5000"
- const IVRRECEIVEURL3 = 'http://157.245.219.158:5000';
+const IVRRECEIVEURL3 = 'http://157.245.219.158:5000';
 
 log4js.configure({
   appenders: {
@@ -121,18 +121,34 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
 
     }
     const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
-    console.log('COLLECTION VALUE => ', _phoneValues.length);
-    const _phoneValue = _phoneValues[_phoneValues.length - 1];
-    console.log('Single VALUE => ', _phoneValue);
-    if (_phoneValue && _phoneValue.forward) {
+    let forwardNumber;
+    if (_phoneValues && _phoneValues.length) {
+      console.log('COLLECTION VALUE => ', _phoneValues.length);
+      const _phoneValue = _phoneValues[_phoneValues.length - 1];
+      console.log('Single VALUE => ', _phoneValue);
+      forwardNumber = _phoneValue && _phoneValue.forward;
+    }
+
+    // WILL CHECK IN RESPONSE HISTORY IF VALUE IS NOT PRESENT IN OUTBOUND HISTORY
+    if (!forwardNumber) {
+      const _resValues = await _dbCon.collection('response_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
+      if (_resValues && _resValues.length) {
+        console.log('COLLECTION VALUE => ', _resValues.length);
+        const _resValue = _resValues[_resValues.length - 1];
+        console.log('Single VALUE => ', _resValue);
+        forwardNumber = _resValue && _resValue.forward;
+      }
+    }
+
+    if (forwardNumber) {
 
       try {
-        __logger.info('Forward Number', _phoneValue.forward);
+        __logger.info('Forward Number', forwardNumber);
       } catch (ex) {
 
       }
       call.transfer({
-        to: `+1${_phoneValue.forward}`,
+        to: `+1${forwardNumber}`,
         from: event.data.payload.from,
         webhook_url: `${IVRRECEIVEURL3}/incoming3`
       });
