@@ -12,8 +12,8 @@ const log4js = require('log4js');
 const path = require('path');
 
 
-//const IVRRECEIVEURL3 = "http://138.68.245.156:5000"
-const IVRRECEIVEURL3 = 'http://157.245.219.158:5000';
+const IVRRECEIVEURL3 = "http://138.68.245.156:5000"
+//const IVRRECEIVEURL3 = 'http://157.245.219.158:5000';
 
 log4js.configure({
   appenders: {
