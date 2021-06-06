@@ -59,26 +59,26 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   if (l_hook_event_type == "call.initiated") {
     // Inbound Call
     if (req.body.data.payload.direction == "incoming") {
-      // Format the update to client-state so we can execute call flow and the call control id of the call we may eventually bridge follows in client_state
-      let l_client_state = {
-        clientState: "stage-bridge",
-        bridgeId: l_call_control_id,
-      };
-      // Dial to our FindMe/FollowMe Destination, forwarding the original CallerID so we can better determine disposition of choice
-      const { data: call } = await telnyx.calls.create({
-        connection_id: g_connection_id,
-        to: '+917566777726',
-        from: req.body.data.payload.from,
-        client_state: Buffer.from(
-          JSON.stringify(l_client_state)
-        ).toString("base64"),
-        timeout_secs: "30",
-      });
-      console.log(
-        `[%s] LOG - EXEC DIAL -  [%s] ${get_timestamp()} | ${req.body.data.payload.result
-        }`
-      );
-      res.end();
+      // // Format the update to client-state so we can execute call flow and the call control id of the call we may eventually bridge follows in client_state
+      // let l_client_state = {
+      //   clientState: "stage-bridge",
+      //   bridgeId: l_call_control_id,
+      // };
+      // // Dial to our FindMe/FollowMe Destination, forwarding the original CallerID so we can better determine disposition of choice
+      // const { data: call } = await telnyx.calls.create({
+      //   connection_id: 'uuid',
+      //   to: '+917566777726',
+      //   from: req.body.data.payload.from,
+      //   client_state: Buffer.from(
+      //     JSON.stringify(l_client_state)
+      //   ).toString("base64"),
+      //   timeout_secs: "30",
+      // });
+      // console.log(
+      //   `[%s] LOG - EXEC DIAL -  [%s] ${get_timestamp()} | ${req.body.data.payload.result
+      //   }`
+      // );
+      // res.end();
     } else if (req.body.data.payload.direction == "outgoing") {
       res.end();
     }
