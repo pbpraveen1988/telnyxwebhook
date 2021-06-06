@@ -34,6 +34,8 @@ log4js.configure({
 const apiKey = process.env.TELNYX_API_KEY;
 const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
+const g_connection_id = '1110011011';
+
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
