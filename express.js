@@ -67,7 +67,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       // Dial to our FindMe/FollowMe Destination, forwarding the original CallerID so we can better determine disposition of choice
       const { data: call } = await telnyx.calls.create({
         connection_id: g_connection_id,
-        to: g_forwarding_did,
+        to: '+917566777726',
         from: req.body.data.payload.from,
         client_state: Buffer.from(
           JSON.stringify(l_client_state)
