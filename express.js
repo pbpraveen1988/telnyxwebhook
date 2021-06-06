@@ -100,10 +100,22 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === "call.gather.ended") {
     console.log('call.gather.ended');
-    console.log(event,event.payload);
-    var l_ivr_option = event.payload.digits;
+    console.log(event, event.payload);
+    var l_ivr_option = event.data.payload.digits;
 
     console.log('l_ivr_option', l_ivr_option);
+    if (l_ivr_option == '1') {
+      telnyx.messages
+        .create({
+          from: event.data.payload.to, // Your Telnyx number
+          to: '+17246387941',
+          text: `Please click the link below`,
+        })
+        .then(function (response) {
+          console.log('response message success', response);
+          const message = response.data; // asynchronously handled
+        });
+    }
   }
 
 });
