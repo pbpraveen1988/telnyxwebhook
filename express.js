@@ -60,6 +60,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   // Call Initiated >> Command Dial
   if (event.data.event_type === 'call.initiated') {
     // Inbound Call
+    console.log("===========================");
+    console.log('INCOMING CALL INITIATED');
     if (event.data.payload.direction == "incoming") {
       const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
       call.answer();
@@ -68,7 +70,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     }
 
     // Webhook Dial answered by User - Command Gather Using Speak
-  } else if (event.data.event.type == "call.answered") {
+  } else if (event.data.event_type == "call.answered") {
+    console.log("===========================");
+    console.log('INCOMING CALL ANSWERED');
     let l_client_state = {
       clientState: "stage-bridge",
       bridgeId: event.data.payload.call_control_id,
@@ -94,7 +98,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     // gather.hangup();
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
-  } else if (event.data.event.type === "call.gather.ended") {
+  } else if (event.data.event_type === "call.gather.ended") {
     console.log('call.gather.ended');
     var l_ivr_option = req.body.payload.digits;
 
