@@ -12,8 +12,10 @@ const log4js = require('log4js');
 const path = require('path');
 
 
-//const IVRRECEIVEURL3 = "http://138.68.245.156:5000"
-const IVRRECEIVEURL3 = 'http://165.22.5.49:5000';
+const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
+// TTS Options
+const g_ivr_voice = "female";
+const g_ivr_language = "en-GB";
 
 log4js.configure({
   appenders: {
@@ -36,7 +38,7 @@ const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
-app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
+app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   var event;
 
   try {
@@ -50,7 +52,6 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
   } catch (e) {
     // If `constructEvent` throws an error, respond with the message and return.
     console.log('Error', e.message);
-
     return res.status(400).send('Webhook Error:' + e.message);
   }
 
@@ -64,115 +65,60 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
   /**
    * Inbound Call Control:
    * first we listen for an initiation event and then answer the call
+   * INCOMING CALL
    */
   if (event.data.event_type === 'call.initiated') {
-    // console.log(event.data);
     try {
       __logger.info('====================================================================');
       __logger.info('CALL INITIATED', typeof (event.data) == 'object' ? JSON.stringify(event.data) : event.data);
     } catch (ex) {
 
     }
-    //console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
+
     try {
       __logger.info('Call Initiated. Answering call with call control id: ', event.data.payload.call_control_id);
     } catch (ex) {
 
     }
 
+    if (event.data.payload.direction == "incoming") {
+      console.log('incoming call direction');
+    }
+
 
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-
-    // const { data: call1 } = await telnyx.calls.create({
-    //   connection_id: 'uuid',
-    //   to: '+18327141518',
-    //   from: event.data.payload.from
-    // });
-    // call1.bridge({ call_control_id: event.data.payload.call_control_id });
-    // call.transfer({ to: '+18327141518' });
-
     call.answer();
   }
   if (event.data.event_type === 'call.answered') {
-    // console.log('Call Answered. Gather audio with the call control id: ' + event.data.payload.call_control_id);
-
+    // WILL EXECUTE THE CODE AFTER CALL GET ANSWERED
     try {
       __logger.info('Call Answered. Gather audio with the call control id: ', event.data.payload.call_control_id);
     } catch (ex) {
 
     }
-    const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-
-    console.log('TRANSFERRING THE CALL');
-    try {
-      __logger.info('TRANSFERRING THE CALL');
-    } catch (ex) {
-
-    }
-
-    const _dbCon = RinglessDB();
+    const gather = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
     let _fromNumber = event.data.payload.from;
     console.log(_fromNumber);
     _fromNumber = _fromNumber.substr(_fromNumber.length - 10);
-    //console.log('AFTER SPLICE', _fromNumber);
+    // let l_client_state = {
+    //   clientState: "stage-dial",
+    //   bridgeId: l_client_state_o.bridgeId,
+    // // };
+    // client_state: Buffer.from(
+    //   JSON.stringify(l_client_state)
+    // ).toString("base64"),
+    gather.gather_using_speak({
+      payload: "Call Forwarded press 1 to accept or 2 to reject",
+      voice: g_ivr_voice,
+      language: g_ivr_language,
+      valid_digits: "123",
+      
+    });
     try {
       __logger.info('AFTER SPLICE', _fromNumber);
     } catch (ex) {
 
     }
-    const _phoneValues = await _dbCon.collection('outbound_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
-    let forwardNumber;
-    if (_phoneValues && _phoneValues.length) {
-      console.log('COLLECTION VALUE => ', _phoneValues.length);
-      const _phoneValue = _phoneValues[_phoneValues.length - 1];
-      console.log('Single VALUE => ', _phoneValue);
-      forwardNumber = _phoneValue && _phoneValue.forward;
-    }
-
-    // WILL CHECK IN RESPONSE HISTORY IF VALUE IS NOT PRESENT IN OUTBOUND HISTORY
-    if (!forwardNumber) {
-      const _resValues = await _dbCon.collection('response_history').find({ PhoneTo: _fromNumber.toString() }).toArray();
-      if (_resValues && _resValues.length) {
-        console.log('COLLECTION VALUE => ', _resValues.length);
-        const _resValue = _resValues[_resValues.length - 1];
-        console.log('Single VALUE => ', _resValue);
-        forwardNumber = _resValue && _resValue.forward;
-      }
-    }
-
-    if (forwardNumber) {
-
-      try {
-        __logger.info('Forward Number', forwardNumber);
-      } catch (ex) {
-
-      }
-      call.transfer({
-        to: `+1${forwardNumber}`,
-        from: event.data.payload.from,
-        webhook_url: `${IVRRECEIVEURL3}/incoming3`
-      });
-    } else {
-      try {
-        __logger.info('record not found');
-      } catch (ex) {
-      }
-      const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-      call.hangup();
-    }
-
-    // const { data: call1 } = await telnyx.calls.create({
-    //   connection_id:'uuid',
-    //   to: '+18327141518',
-    //   from: event.data.payload.from,
-    //   webhook_url: 'http://206.81.2.172:5000/incoming3'
-    // });
-    console.log('EVENT CALL1');
-    //call1.bridge({ call_control_id: event.data.payload.call_control_id });
-    // call.transfer({ to: '+18327141518' });
-
-    // call.transfer({ to: '+18327141518' });
-    //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
   }
 
   if (event.data.event_type === 'call.transferred') {
@@ -186,21 +132,18 @@ app.post('/receiveincoming', bodyParser.json(), async function (req, res) {
 
   if (event.data.event_type === 'call.gather.ended') {
     console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
-
     const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-
     call.hangup();
   }
   if (event.data.event_type === 'call.hangup') {
     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
-
   }
   // Event was 'constructed', so we can respond with a 200 OK
   res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
 
-app.post('/incoming3', bodyParser.json(), async function (req, res) {
+app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   console.log('receive incoming 3');
   var event;
   try {
