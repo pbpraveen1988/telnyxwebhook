@@ -6,8 +6,6 @@ const logger = require("morgan");
 const bodyParser = require('body-parser');
 const app = Express();
 const fs = require('fs');
-const { RinglessDB } = require('./global/constants');
-const db_connect = require("./tools/db-connect");
 const log4js = require('log4js');
 const path = require('path');
 
@@ -112,7 +110,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       voice: g_ivr_voice,
       language: g_ivr_language,
       valid_digits: "123",
-      
+
     });
     try {
       __logger.info('AFTER SPLICE', _fromNumber);
@@ -218,25 +216,20 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
-db_connect
-  .DBConnectMongoose()
-  .then((dbInfo) => {
 
-    var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 
 
-    logger.token('req-headers', function (req, res) {
-      return req.body ? JSON.stringify(req.body) : req.body;
-    })
+logger.token('req-headers', function (req, res) {
+  return req.body ? JSON.stringify(req.body) : req.body;
+})
 
-    app.use(logger(':method :url :status :req-headers', { stream: accessLogStream }))
-
-
-    app.listen(5000, function () {
-      console.log('Example app listening on port 5000!');
-    });
+app.use(logger(':method :url :status :req-headers', { stream: accessLogStream }))
 
 
+app.listen(5000, function () {
+  console.log('Example app listening on port 5000!');
+});
 
-  });
+
 
