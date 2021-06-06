@@ -100,7 +100,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === "call.gather.ended") {
     console.log('call.gather.ended');
-    var l_ivr_option = req.body.payload.digits;
+    console.log(event,event.payload);
+    var l_ivr_option = event.payload.digits;
 
     console.log('l_ivr_option', l_ivr_option);
   }
