@@ -39,9 +39,6 @@ const g_connection_id = '1110011011';
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
-
-
-
   var event;
   try {
     event = telnyx.webhooks.constructEvent(
@@ -108,13 +105,15 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       telnyx.messages
         .create({
           from: event.data.payload.to, // Your Telnyx number
-          to: '+17246387941',
-          text: `Please click the link below`,
+          to: event.data.payload.from,
+          text: `Please click the link below to fill the form http://3.142.237.36`,
         })
         .then(function (response) {
           console.log('response message success', response);
           const message = response.data; // asynchronously handled
         });
+    } else {
+      res.end();
     }
   }
 
