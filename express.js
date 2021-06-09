@@ -92,7 +92,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         client_state: Buffer.from(
           JSON.stringify(l_client_state)
         ).toString("base64"),
-        timeout_secs: "10"
+        timeout_secs: "30"
       });
       console.log('after  speak');
     } catch (ex) {
