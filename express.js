@@ -92,7 +92,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         client_state: Buffer.from(
           JSON.stringify(l_client_state)
         ).toString("base64"),
-        timeout_secs: "30"
+        timeout_secs: "10"
       });
       console.log('after  speak');
     } catch (ex) {
@@ -130,6 +130,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             voice: g_ivr_voice,
             language: g_ivr_language,
           })
+          gather.hangup();
         });
     } if (l_ivr_option == '2' || l_ivr_option == 2) {
       const gather = new telnyx.Call({
@@ -140,6 +141,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         voice: g_ivr_voice,
         language: g_ivr_language,
       })
+      gather.hangup();
     } else {
       res.end();
       const gather = new telnyx.Call({
@@ -150,6 +152,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         voice: g_ivr_voice,
         language: g_ivr_language,
       })
+      gather.hangup();
     }
   }
 
