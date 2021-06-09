@@ -79,8 +79,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
     });
+    await gather.gather_using_audio({ audio_url: 'https://audiocdn.123rf.com/preview/nouveaubaroque/nouveaubaroque2007/nouveaubaroque200700031_preview.mp3' });
+
+
     gather.gather_using_speak({
-      payload: "Call Forwarded press 1 to accept or 2 to reject",
+      payload: "Welcome to Quote On home, to continue press 1, press 2 to reject",
       voice: g_ivr_voice,
       language: g_ivr_language,
       valid_digits: "123",
@@ -95,8 +98,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     // gather.hangup();
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
-  } else if (event.data.event_type === "call.gather.ended") {
-    console.log('call.gather.ended');
+  } else if (event.data.event_type === "call.gather.ended" || event.data.event_type === 'call.dtmf.received') {
+    console.log('call.gather.ended', event.data.event_type);
     console.log(event, event.payload);
     var l_ivr_option = event.data.payload.digits;
 
