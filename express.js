@@ -73,10 +73,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   } else if (event.data.event_type == "call.answered") {
     console.log("===========================");
     console.log('INCOMING CALL ANSWERED');
-    let l_client_state = {
-      clientState: "stage-bridge",
-      bridgeId: event.data.payload.call_control_id,
-    };
 
     // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
     const gather = new telnyx.Call({
@@ -89,6 +85,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
     });
+    let l_client_state = {
+      clientState: "stage-bridge",
+      bridgeId: event.data.payload.call_control_id,
+    };
+
     gather.gather_using_speak({
       payload: "                  Welcome to Quote On home, to continue press 1, press 2 to reject",
       voice: g_ivr_voice,
