@@ -35,6 +35,7 @@ const apiKey = process.env.TELNYX_API_KEY;
 const publicKey = process.env.TELNYX_PUBLIC_KEY;
 
 const g_connection_id = '1110011011';
+let hangup = false;
 
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
@@ -113,6 +114,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     console.log('l_ivr_option', l_ivr_option);
     if (l_ivr_option == '1' || l_ivr_option == 1) {
+      hangup = true;
       telnyx.messages
         .create({
           from: event.data.payload.to, // Your Telnyx number
@@ -131,8 +133,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             language: g_ivr_language,
             timeout_secs: "10"
           })
-
-
         });
     } if (l_ivr_option == '2' || l_ivr_option == 2) {
       const gather = new telnyx.Call({
@@ -144,17 +144,20 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         language: g_ivr_language,
         timeout_secs: "10"
       })
+      hangup = true;
+      setTimeout(() => gather.hangup(),10000)
     } else {
       const gather = new telnyx.Call({
         call_control_id: event.data.payload.call_control_id,
       });
+      hangup = true;
       gather.gather_using_speak({
         payload: " Thank You, for select the quote on home",
         voice: g_ivr_voice,
         language: g_ivr_language,
         timeout_secs: "10"
       })
-
+       
     }
     res.end();
   }
