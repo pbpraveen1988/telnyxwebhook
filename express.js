@@ -82,13 +82,14 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   } else if (event.data.event_type === 'call.playback.ended') {
     console.log("after audio before speak");
-    const gather = new telnyx.Call({
-      call_control_id: event.data.payload.call_control_id,
-    });
     let l_client_state = {
       clientState: "stage-bridge",
       bridgeId: event.data.payload.call_control_id,
     };
+
+    const gather = new telnyx.Call({
+      call_control_id: event.data.payload.call_control_id,
+    });
 
     gather.gather_using_speak({
       payload: "                  Welcome to Quote On home, to continue press 1, press 2 to reject",
@@ -96,9 +97,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       language: g_ivr_language,
       valid_digits: "12",
       invalid_payload: "Please, enter the valid input",
-      client_state: Buffer.from(
-        JSON.stringify(l_client_state)
-      ).toString("base64"),
+     
       timeout_secs: "30"
     });
     // gather.hangup();
