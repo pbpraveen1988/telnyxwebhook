@@ -84,10 +84,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     try {
       console.log('before speak');
       gather.gather_using_speak({
-        payload: "Welcome to Quote On home, to continue press 1, press 2 to reject",
+        payload: "                  Welcome to Quote On home, to continue press 1, press 2 to reject",
         voice: g_ivr_voice,
         language: g_ivr_language,
         valid_digits: "123",
+        invalid_payload:"Please, enter the valid input",
         client_state: Buffer.from(
           JSON.stringify(l_client_state)
         ).toString("base64"),
