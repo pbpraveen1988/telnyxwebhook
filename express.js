@@ -133,6 +133,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             language: g_ivr_language,
             timeout_secs: "10"
           })
+          setTimeout(() => gather.hangup(), 10 * 1000)
         });
     } if (l_ivr_option == '2' || l_ivr_option == 2) {
       const gather = new telnyx.Call({
@@ -145,7 +146,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         timeout_secs: "10"
       })
       hangup = true;
-      setTimeout(() => gather.hangup(),10000)
+      setTimeout(() => gather.hangup(), 10 * 1000)
     } else {
       const gather = new telnyx.Call({
         call_control_id: event.data.payload.call_control_id,
@@ -157,7 +158,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         language: g_ivr_language,
         timeout_secs: "10"
       })
-       
+
     }
     res.end();
   }
