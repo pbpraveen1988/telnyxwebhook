@@ -140,8 +140,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         payload: " Thank You, for select the quote on home",
         voice: g_ivr_voice,
         language: g_ivr_language,
+      }).then(res => {
+        gather.hangup();
       })
-      gather.hangup();
     } else {
       const gather = new telnyx.Call({
         call_control_id: event.data.payload.call_control_id,
