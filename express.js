@@ -55,6 +55,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     return res.status(400).send('Webhook Error:' + e.message);
   }
 
+  console.log("EVENT TYPE =>", event.data.event_type);
+
   // Call Initiated >> Command Dial
   if (event.data.event_type === 'call.initiated') {
     // Inbound Call
