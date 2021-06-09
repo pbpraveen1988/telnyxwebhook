@@ -129,8 +129,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             payload: " Thank You, for selecting the quote on home",
             voice: g_ivr_voice,
             language: g_ivr_language,
+            timeout_secs: "10"
           })
-          gather.hangup();
+
+
         });
     } if (l_ivr_option == '2' || l_ivr_option == 2) {
       const gather = new telnyx.Call({
@@ -140,8 +142,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         payload: " Thank You, for select the quote on home",
         voice: g_ivr_voice,
         language: g_ivr_language,
-      }).then(res => {
-        gather.hangup();
+        timeout_secs: "10"
       })
     } else {
       const gather = new telnyx.Call({
@@ -151,8 +152,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         payload: " Thank You, for select the quote on home",
         voice: g_ivr_voice,
         language: g_ivr_language,
+        timeout_secs: "10"
       })
-      //  gather.hangup();
+
     }
     res.end();
   }
