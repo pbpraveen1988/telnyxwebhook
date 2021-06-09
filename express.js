@@ -79,20 +79,25 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
     });
+    console.time('beforeAudio');
     await gather.gather_using_audio({ audio_url: 'https://audiocdn.123rf.com/preview/nouveaubaroque/nouveaubaroque2007/nouveaubaroque200700031_preview.mp3' });
-
-
-    gather.gather_using_speak({
-      payload: "Welcome to Quote On home, to continue press 1, press 2 to reject",
-      voice: g_ivr_voice,
-      language: g_ivr_language,
-      valid_digits: "123",
-      client_state: Buffer.from(
-        JSON.stringify(l_client_state)
-      ).toString("base64"),
-      timeout_secs: "30"
-    });
-
+    console.timeEnd('beforeAudio');
+    try {
+      console.log('before speak');
+      gather.gather_using_speak({
+        payload: "Welcome to Quote On home, to continue press 1, press 2 to reject",
+        voice: g_ivr_voice,
+        language: g_ivr_language,
+        valid_digits: "123",
+        client_state: Buffer.from(
+          JSON.stringify(l_client_state)
+        ).toString("base64"),
+        timeout_secs: "30"
+      });
+      console.log('after  speak');
+    } catch (ex) {
+      console.error(ex);
+    }
 
 
 
