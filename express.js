@@ -130,7 +130,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             voice: g_ivr_voice,
             language: g_ivr_language,
           })
-          gather.hangup();
+        //  gather.hangup();
         });
     } if (l_ivr_option == '2' || l_ivr_option == 2) {
       const gather = new telnyx.Call({
@@ -141,9 +141,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         voice: g_ivr_voice,
         language: g_ivr_language,
       })
-      gather.hangup();
+     // gather.hangup();
     } else {
-      res.end();
+      
       const gather = new telnyx.Call({
         call_control_id: event.data.payload.call_control_id,
       });
@@ -152,8 +152,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         voice: g_ivr_voice,
         language: g_ivr_language,
       })
-      gather.hangup();
+    //  gather.hangup();
     }
+    res.end();
   }
 
 });
