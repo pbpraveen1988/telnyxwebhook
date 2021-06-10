@@ -78,36 +78,41 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
     });
-    await gather.gather_using_audio({ audio_url: 'https://audiocdn.123rf.com/preview/nouveaubaroque/nouveaubaroque2007/nouveaubaroque200700031_preview.mp3' })
+    gather.gather_using_audio({
+      audio_url: 'http://3.142.237.36/assets/dist/file/audio.mp3',
+      valid_digits: "12",
+      invalid_audio_url: "http://3.142.237.36/assets/dist/file/invalid.mp3",
+      timeout_secs: "30"
+    })
 
   } else if (event.data.event_type === 'call.playback.ended') {
-    try {
-      console.log("after audio before speak");
-      let l_client_state = {
-        clientState: "stage-bridge",
-        bridgeId: event.data.payload.call_control_id,
-      };
+    // try {
+    //   console.log("after audio before speak");
+    //   let l_client_state = {
+    //     clientState: "stage-bridge",
+    //     bridgeId: event.data.payload.call_control_id,
+    //   };
 
-      const gather = new telnyx.Call({
-        call_control_id: event.data.payload.call_control_id,
-      });
+    //   const gather = new telnyx.Call({
+    //     call_control_id: event.data.payload.call_control_id,
+    //   });
 
-      gather.gather_using_speak({
-        payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
-        voice: g_ivr_voice,
-        language: g_ivr_language,
-        valid_digits: "12",
-        invalid_payload: "Please, enter the valid input",
+    //   gather.gather_using_speak({
+    //     payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
+    //     voice: g_ivr_voice,
+    //     language: g_ivr_language,
+    //     valid_digits: "12",
+    //     invalid_payload: "Please, enter the valid input",
 
-        // timeout_secs: "30"
-      });
-    } catch (ex) {
-      console.error('ERROR ON CALL PLAYBACK ENDED')
-      console.error(ex);
-    }
+    //     // timeout_secs: "30"
+    //   });
+    // } catch (ex) {
+    //   console.error('ERROR ON CALL PLAYBACK ENDED')
+    //   console.error(ex);
+    // }
     // gather.hangup();
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
-  } else if (event.data.event_type === 'call.dtmf.received') {
+  } else if (event.data.event_type === 'call.dtmf.received' || event.data.event_type === 'call.gather.ended') {
 
     console.log('call.gather.ended', event.data.event_type);
     console.log(event, event.data.payload);
@@ -237,26 +242,26 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   }
 
   if (event.data.event_type === 'call.gather.ended') {
-    console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
+    // console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
 
-    //const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-    let l_client_state = {
-      clientState: "stage-bridge",
-      bridgeId: event.data.payload.call_control_id,
-    };
+    // //const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+    // let l_client_state = {
+    //   clientState: "stage-bridge",
+    //   bridgeId: event.data.payload.call_control_id,
+    // };
 
-    const gather = new telnyx.Call({
-      call_control_id: event.data.payload.call_control_id,
-    });
+    // const gather = new telnyx.Call({
+    //   call_control_id: event.data.payload.call_control_id,
+    // });
 
-    gather.gather_using_speak({
-      payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
-      voice: g_ivr_voice,
-      language: g_ivr_language,
-      valid_digits: "12",
-      invalid_payload: "Please, enter the valid input",
-      timeout_secs: "30"
-    });
+    // gather.gather_using_speak({
+    //   payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
+    //   voice: g_ivr_voice,
+    //   language: g_ivr_language,
+    //   valid_digits: "12",
+    //   invalid_payload: "Please, enter the valid input",
+    //   timeout_secs: "30"
+    // });
 
   }
   if (event.data.event_type === 'call.hangup') {
@@ -264,71 +269,71 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   }
 
 
-  if (event.data.event_type === 'call.dtmf.received') {
+  // if (event.data.event_type === 'call.dtmf.received') {
 
-    console.log('call.gather. INCOMING RECEIVING 2', event.data.event_type);
-    console.log(event, event.data.payload);
-    var l_ivr_option = event.data.payload.digits;
+  //   console.log('call.gather. INCOMING RECEIVING 2', event.data.event_type);
+  //   console.log(event, event.data.payload);
+  //   var l_ivr_option = event.data.payload.digits;
 
-    console.log('l_ivr_option', l_ivr_option);
-    if (l_ivr_option != undefined) {
-      if (l_ivr_option == '1' || l_ivr_option == 1) {
-        hangup = true;
-        telnyx.messages
-          .create({
-            from: event.data.payload.to, // Your Telnyx number
-            to: event.data.payload.from,
-            text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
-          })
-          .then(function (response) {
-            console.log('response message success', response);
-            const message = response.data; // asynchronously handled
-            const gather = new telnyx.Call({
-              call_control_id: event.data.payload.call_control_id,
-            });
-            gather.gather_using_speak({
-              payload: " Thank You, for selecting the quote on home",
-              voice: g_ivr_voice,
-              language: g_ivr_language,
-              timeout_secs: "10"
-            })
-            setTimeout(() => gather.hangup(), 5 * 1000)
-          }).catch(err => {
-            console.error(err);
-          })
-      } if (l_ivr_option == '2' || l_ivr_option == 2) {
+  //   console.log('l_ivr_option', l_ivr_option);
+  //   if (l_ivr_option != undefined) {
+  //     if (l_ivr_option == '1' || l_ivr_option == 1) {
+  //       hangup = true;
+  //       telnyx.messages
+  //         .create({
+  //           from: event.data.payload.to, // Your Telnyx number
+  //           to: event.data.payload.from,
+  //           text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
+  //         })
+  //         .then(function (response) {
+  //           console.log('response message success', response);
+  //           const message = response.data; // asynchronously handled
+  //           const gather = new telnyx.Call({
+  //             call_control_id: event.data.payload.call_control_id,
+  //           });
+  //           gather.gather_using_speak({
+  //             payload: " Thank You, for selecting the quote on home",
+  //             voice: g_ivr_voice,
+  //             language: g_ivr_language,
+  //             timeout_secs: "10"
+  //           })
+  //           setTimeout(() => gather.hangup(), 5 * 1000)
+  //         }).catch(err => {
+  //           console.error(err);
+  //         })
+  //     } if (l_ivr_option == '2' || l_ivr_option == 2) {
 
-        try {
-          const gather = new telnyx.Call({
-            call_control_id: event.data.payload.call_control_id,
-          });
-          gather.gather_using_speak({
-            payload: " Thank You, for select the quote on home",
-            voice: g_ivr_voice,
-            language: g_ivr_language,
-            timeout_secs: "10"
-          })
-          hangup = true;
-          setTimeout(() => gather.hangup(), 5 * 1000)
-        } catch (ex) { }
-      } else {
-        try {
-          const gather = new telnyx.Call({
-            call_control_id: event.data.payload.call_control_id,
-          });
-          hangup = true;
-          gather.gather_using_speak({
-            payload: " Thank You, for select the quote on home",
-            voice: g_ivr_voice,
-            language: g_ivr_language,
-            timeout_secs: "10"
-          })
-        } catch (ex) {
+  //       try {
+  //         const gather = new telnyx.Call({
+  //           call_control_id: event.data.payload.call_control_id,
+  //         });
+  //         gather.gather_using_speak({
+  //           payload: " Thank You, for select the quote on home",
+  //           voice: g_ivr_voice,
+  //           language: g_ivr_language,
+  //           timeout_secs: "10"
+  //         })
+  //         hangup = true;
+  //         setTimeout(() => gather.hangup(), 5 * 1000)
+  //       } catch (ex) { }
+  //     } else {
+  //       try {
+  //         const gather = new telnyx.Call({
+  //           call_control_id: event.data.payload.call_control_id,
+  //         });
+  //         hangup = true;
+  //         gather.gather_using_speak({
+  //           payload: " Thank You, for select the quote on home",
+  //           voice: g_ivr_voice,
+  //           language: g_ivr_language,
+  //           timeout_secs: "10"
+  //         })
+  //       } catch (ex) {
 
-        }
-      }
-    }
-  }
+  //       }
+  //     }
+  //   }
+  // }
 
 
 
