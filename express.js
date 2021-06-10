@@ -177,7 +177,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 
 app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
-  
+  console.log('receive incoming 3');
   var event;
   try {
     event = telnyx.webhooks.constructEvent(
@@ -239,15 +239,101 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   if (event.data.event_type === 'call.gather.ended') {
     console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
 
-    const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+    //const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+    let l_client_state = {
+      clientState: "stage-bridge",
+      bridgeId: event.data.payload.call_control_id,
+    };
 
-    call.hangup();
+    const gather = new telnyx.Call({
+      call_control_id: event.data.payload.call_control_id,
+    });
+
+    gather.gather_using_speak({
+      payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
+      voice: g_ivr_voice,
+      language: g_ivr_language,
+      valid_digits: "12",
+      invalid_payload: "Please, enter the valid input",
+      timeout_secs: "30"
+    });
+
   }
   if (event.data.event_type === 'call.hangup') {
     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
   }
+
+
+  if (event.data.event_type === 'call.dtmf.received') {
+
+    console.log('call.gather. INCOMING RECEIVING 2', event.data.event_type);
+    console.log(event, event.data.payload);
+    var l_ivr_option = event.data.payload.digits;
+
+    console.log('l_ivr_option', l_ivr_option);
+    if (l_ivr_option != undefined) {
+      if (l_ivr_option == '1' || l_ivr_option == 1) {
+        hangup = true;
+        telnyx.messages
+          .create({
+            from: event.data.payload.to, // Your Telnyx number
+            to: event.data.payload.from,
+            text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
+          })
+          .then(function (response) {
+            console.log('response message success', response);
+            const message = response.data; // asynchronously handled
+            const gather = new telnyx.Call({
+              call_control_id: event.data.payload.call_control_id,
+            });
+            gather.gather_using_speak({
+              payload: " Thank You, for selecting the quote on home",
+              voice: g_ivr_voice,
+              language: g_ivr_language,
+              timeout_secs: "10"
+            })
+            setTimeout(() => gather.hangup(), 5 * 1000)
+          }).catch(err => {
+            console.error(err);
+          })
+      } if (l_ivr_option == '2' || l_ivr_option == 2) {
+
+        try {
+          const gather = new telnyx.Call({
+            call_control_id: event.data.payload.call_control_id,
+          });
+          gather.gather_using_speak({
+            payload: " Thank You, for select the quote on home",
+            voice: g_ivr_voice,
+            language: g_ivr_language,
+            timeout_secs: "10"
+          })
+          hangup = true;
+          setTimeout(() => gather.hangup(), 5 * 1000)
+        } catch (ex) { }
+      } else {
+        try {
+          const gather = new telnyx.Call({
+            call_control_id: event.data.payload.call_control_id,
+          });
+          hangup = true;
+          gather.gather_using_speak({
+            payload: " Thank You, for select the quote on home",
+            voice: g_ivr_voice,
+            language: g_ivr_language,
+            timeout_secs: "10"
+          })
+        } catch (ex) {
+
+        }
+      }
+    }
+  }
+
+
+
   // Event was 'constructed', so we can respond with a 200 OK
-  res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
+  // res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
 
