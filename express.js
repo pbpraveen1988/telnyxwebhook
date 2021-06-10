@@ -177,7 +177,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 
 app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
-  console.log('receive incoming 3');
+  
   var event;
   try {
     event = telnyx.webhooks.constructEvent(
