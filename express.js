@@ -134,11 +134,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             const gather = new telnyx.Call({
               call_control_id: event.data.payload.call_control_id,
             });
-            gather.gather_using_speak({
-              payload: " Thank You, for selecting the quote on home",
-              voice: g_ivr_voice,
-              language: g_ivr_language,
-              timeout_secs: "10"
+            gather.gather_using_audio({
+              audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+              
+              timeout_secs: "30"
             })
             setTimeout(() => gather.hangup(), 5 * 1000)
           }).catch(err => {
@@ -150,11 +149,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
           const gather = new telnyx.Call({
             call_control_id: event.data.payload.call_control_id,
           });
-          gather.gather_using_speak({
-            payload: " Thank You, for select the quote on home",
-            voice: g_ivr_voice,
-            language: g_ivr_language,
-            timeout_secs: "10"
+          gather.gather_using_audio({
+            audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+            
+            timeout_secs: "30"
           })
           hangup = true;
           setTimeout(() => gather.hangup(), 5 * 1000)
@@ -165,11 +163,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             call_control_id: event.data.payload.call_control_id,
           });
           hangup = true;
-          gather.gather_using_speak({
-            payload: " Thank You, for select the quote on home",
-            voice: g_ivr_voice,
-            language: g_ivr_language,
-            timeout_secs: "10"
+          gather.gather_using_audio({
+            audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+            
+            timeout_secs: "30"
           })
         } catch (ex) {
 
