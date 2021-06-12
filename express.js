@@ -365,12 +365,8 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
   console.log(req.body);
   if (req.body.data.event_type === 'message.received') {
-    console.log(`New message from ${req.body.data.from}: ${req.body.data.body}`);
-    console.log(req.body.data);
-    console.log(req.body.data.payload.from);
-    console.log(req.body.data.payload.to);
-
     const _body = req.body.data.payload.text;
+    console.log(_body);
     let body;
     if (_body) {
       body = _body.split(',');
