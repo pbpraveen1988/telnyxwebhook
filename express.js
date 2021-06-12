@@ -376,12 +376,13 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         "address": body[1],
         "country": "USA"
       };
+      console.log(_Body);
       axios({
         method: 'post',
         url: 'http://3.142.237.36/api/users/',
         data: _Body
       }).then(response => {
-        console.log(response);
+        console.log(response.data);
       }).catch(ex => {
         console.error('error', ex);
       })
