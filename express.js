@@ -363,6 +363,7 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
 
 
 app.post('/getmessages', (req, res) => {
+  console.log(req);
   console.log(`New message from ${req.body.from}: ${req.body.body}`);
   const _body = req.body.body;
   let body;
