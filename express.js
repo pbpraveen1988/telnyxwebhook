@@ -363,27 +363,31 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
 
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
-  console.log(req);
-  console.log(`New message from ${req.body.from}: ${req.body.body}`);
-  const _body = req.body.body;
-  let body;
-  if (_body) {
-    body = _body.split(',');
-    const _Body = {
-      "first_name": body[0],
-      "mobile": req.body.from,
-      "address": body[1],
-      "country": "USA"
-    };
-    axios({
-      method: 'post',
-      url: 'http://3.142.237.36/api/users/',
-      data: _Body
-    }).then(response => {
-      console.log(response);
-    }).catch(ex => {
-      console.error('error', ex);
-    })
+
+  if (req.body.event_type === 'message.received') {
+    console.log(`New message from ${req.body.data.from}: ${req.body.data.body}`);
+    console.log(req.body.data);
+
+    const _body = req.body.data;
+    let body;
+    if (_body) {
+      body = _body.split(',');
+      const _Body = {
+        "first_name": body[0],
+        "mobile": req.body.from,
+        "address": body[1],
+        "country": "USA"
+      };
+      axios({
+        method: 'post',
+        url: 'http://3.142.237.36/api/users/',
+        data: _Body
+      }).then(response => {
+        console.log(response);
+      }).catch(ex => {
+        console.error('error', ex);
+      })
+    }
   }
 
 });
