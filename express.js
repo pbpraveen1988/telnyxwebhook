@@ -108,7 +108,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
           audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
           timeout_secs: "30"
         })
-        setTimeout(() => gather.hangup(), 5 * 1000)
+        gather.hangup();
       }).catch(err => {
         console.error(err);
       })
@@ -164,7 +164,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
               audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
               timeout_secs: "30"
             })
-            setTimeout(() => gather.hangup(), 5 * 1000)
+            gather.hangup();
           }).catch(err => {
             console.error(err);
           })
@@ -364,29 +364,26 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
 
 app.post('/getmessages', (req, res) => {
   console.log(`New message from ${req.body.from}: ${req.body.body}`);
-  const body = req.body.body;
-
-  const _Body = {
-    "first_name": body.name,
-    "last_name": "",
-    "email": body.email,
-    "mobile": body.from,
-    "state": body.state,
-    "city": body.city,
-    "address": body.address,
-    "zipcode": body.zipcode,
-    "country": "USA"
-  };
-  axios({
-    method: 'post',
-    url: 'http://3.142.237.36/api/users/',
-    data: _Body
-  }).then(response => {
-    console.log(response);
-  }).catch(ex => {
-    console.error('error', ex);
-  })
-
+  const _body = req.body.body;
+  let body;
+  if (_body) {
+    body = _body.split(',');
+    const _Body = {
+      "first_name": body[0],
+      "mobile": req.body.from,
+      "address": body[1],
+      "country": "USA"
+    };
+    axios({
+      method: 'post',
+      url: 'http://3.142.237.36/api/users/',
+      data: _Body
+    }).then(response => {
+      console.log(response);
+    }).catch(ex => {
+      console.error('error', ex);
+    })
+  }
 
 });
 
