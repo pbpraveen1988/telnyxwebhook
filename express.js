@@ -370,13 +370,13 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
     console.log(req.body.data.payload.from);
     console.log(req.body.data.payload.to);
 
-    const _body = req.body.data;
+    const _body = req.body.data.payload.text;
     let body;
     if (_body) {
       body = _body.split(',');
       const _Body = {
         "first_name": body[0],
-        "mobile": req.body.from,
+        "mobile": req.body.data.payload.from.phone_number,
         "address": body[1],
         "country": "USA"
       };
