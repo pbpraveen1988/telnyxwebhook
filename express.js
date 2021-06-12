@@ -39,6 +39,7 @@ let hangup = false;
 
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
+let userdata = {}
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   var event;
   try {
@@ -73,7 +74,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   } else if (event.data.event_type == "call.answered") {
     console.log("===========================");
     console.log('INCOMING CALL ANSWERED');
-
+    userdata = {
+      from: event.data.payload.from,
+      to: event.data.payload.to
+    }
     // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
@@ -87,10 +91,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   } else if (event.data.event_type === 'call.playback.ended') {
     console.log('playback ended', event);
+
     telnyx.messages
       .create({
-        from: event.data.payload.to, // Your Telnyx number
-        to: event.data.payload.from,
+        from: userdata.to, // Your Telnyx number
+        to: userdata.from,
         text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
       })
       .then(function (response) {
