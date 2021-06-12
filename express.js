@@ -141,7 +141,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // gather.hangup();
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === 'call.dtmf.received') {
-    
+
   }
 
 });
@@ -234,7 +234,7 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
   }
 
- 
+
 });
 
 
@@ -243,7 +243,6 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
   if (req.body.data.event_type === 'message.received') {
     const _body = req.body.data.payload.text;
     if (_body) {
-      console.log(_Body);
       axios({
         method: 'post',
         url: 'http://3.142.237.36/api/users/',
