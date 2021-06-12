@@ -8,7 +8,7 @@ const app = Express();
 const fs = require('fs');
 const log4js = require('log4js');
 const path = require('path');
-
+const axios = require('axios');
 
 const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
 // TTS Options
@@ -79,13 +79,36 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       call_control_id: event.data.payload.call_control_id,
     });
     gather.gather_using_audio({
-      audio_url: 'http://3.142.237.36/assets/dist/file/audio.mp3',
+      audio_url: 'http://3.142.237.36/assets/dist/file/author.mp3',
       valid_digits: "12",
-      invalid_audio_url: "http://3.142.237.36/assets/dist/file/invalid.mp3",
+      invalid_audio_url: "http://3.142.237.36/assets/dist/file/author.mp3",
       timeout_secs: "30"
     })
 
   } else if (event.data.event_type === 'call.playback.ended') {
+
+    telnyx.messages
+      .create({
+        from: event.data.payload.to, // Your Telnyx number
+        to: event.data.payload.from,
+        text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
+      })
+      .then(function (response) {
+        console.log('response message success', response);
+        const message = response.data; // asynchronously handled
+        const gather = new telnyx.Call({
+          call_control_id: event.data.payload.call_control_id,
+        });
+        gather.gather_using_audio({
+          audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+          timeout_secs: "30"
+        })
+        setTimeout(() => gather.hangup(), 5 * 1000)
+      }).catch(err => {
+        console.error(err);
+      })
+
+
     // try {
     //   console.log("after audio before speak");
     //   let l_client_state = {
@@ -112,12 +135,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // }
     // gather.hangup();
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
-  } else if (event.data.event_type === 'call.dtmf.received' || event.data.event_type === 'call.gather.ended') {
-
+  } else if (event.data.event_type === 'call.dtmf.received') {
     console.log('call.gather.ended', event.data.event_type);
     console.log(event, event.data.payload);
     var l_ivr_option = event.data.payload.digits;
-
     console.log('l_ivr_option', l_ivr_option);
     if (l_ivr_option != undefined) {
       if (l_ivr_option == '1' || l_ivr_option == 1) {
@@ -136,7 +157,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             });
             gather.gather_using_audio({
               audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-              
               timeout_secs: "30"
             })
             setTimeout(() => gather.hangup(), 5 * 1000)
@@ -151,7 +171,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
           });
           gather.gather_using_audio({
             audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-            
             timeout_secs: "30"
           })
           hangup = true;
@@ -165,7 +184,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
           hangup = true;
           gather.gather_using_audio({
             audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-            
             timeout_secs: "30"
           })
         } catch (ex) {
@@ -338,6 +356,34 @@ app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
   // res.status(200).send(`Signed Webhook Received: ${event.data.event_type}, ${event.data.id}`);
 });
 
+
+app.post('/getmessages', (req, res) => {
+  console.log(`New message from ${req.body.from}: ${req.body.body}`);
+  const body = req.body.body;
+
+  const _Body = {
+    "first_name": body.name,
+    "last_name": "",
+    "email": body.email,
+    "mobile": body.from,
+    "state": body.state,
+    "city": body.city,
+    "address": body.address,
+    "zipcode": body.zipcode,
+    "country": "USA"
+  };
+  axios({
+    method: 'post',
+    url: 'http://3.142.237.36/api/users/',
+    data: _Body
+  }).then(response => {
+    console.log(response);
+  }).catch(ex => {
+    console.error('error', ex);
+  })
+
+
+});
 
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 
