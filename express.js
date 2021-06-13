@@ -14,6 +14,8 @@ const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
 // TTS Options
 const g_ivr_voice = "female";
 const g_ivr_language = "en-GB";
+let messageSent = false;
+let receiveAlready = false;
 
 log4js.configure({
   appenders: {
@@ -72,6 +74,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     // Webhook Dial answered by User - Command Gather Using Speak
   } else if (event.data.event_type == "call.answered") {
+
+    if (!messageSent) {
+      messageSent = true;
+    }
+
     // console.log("===========================");
     // console.log('INCOMING CALL ANSWERED');
     userdata = {
@@ -91,28 +98,29 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   } else if (event.data.event_type === 'call.playback.ended') {
     console.log('playback ended', event);
-
-    telnyx.messages
-      .create({
-        from: userdata.to, // Your Telnyx number
-        to: userdata.from,
-        text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
-      })
-      .then(function (response) {
-        console.log('response message success', response);
-        const message = response.data; // asynchronously handled
-        const gather = new telnyx.Call({
-          call_control_id: event.data.payload.call_control_id,
-        });
-        gather.gather_using_audio({
-          audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-          timeout_secs: "30"
+    if (messageSent) {
+      telnyx.messages
+        .create({
+          from: userdata.to, // Your Telnyx number
+          to: userdata.from,
+          text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
         })
-        gather.hangup();
-      }).catch(err => {
-        console.error(err);
-      })
-
+        .then(function (response) {
+          messageSent = false;
+          console.log('response message success', response);
+          const message = response.data; // asynchronously handled
+          const gather = new telnyx.Call({
+            call_control_id: event.data.payload.call_control_id,
+          });
+          gather.gather_using_audio({
+            audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+            timeout_secs: "30"
+          })
+          gather.hangup();
+        }).catch(err => {
+          console.error(err);
+        })
+    }
 
     // try {
     //   console.log("after audio before speak");
@@ -142,6 +150,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === 'call.dtmf.received') {
 
+  } else if (event.data.event_type === 'call.hangup') {
+    messageSent = false;
+    receiveAlready = false;
   }
 
 });
