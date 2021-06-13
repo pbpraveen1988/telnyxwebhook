@@ -251,10 +251,14 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
 
-  console.log(req.body.data);
 
   console.log('Message Received already', receiveAlready);
-  if (req.body.data.event_type === 'message.received' && !receiveAlready) {
+
+  if (!receiveAlready) {
+    receiveAlready = req.body.data.id;
+  }
+
+  if (req.body.data.event_type === 'message.received' && receiveAlready != req.body.data.id) {
     receiveAlready = req.body.data.payload.text;
     const _body = req.body.data.payload.text;
 
