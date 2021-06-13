@@ -97,7 +97,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     })
 
   } else if (event.data.event_type === 'call.playback.ended') {
-   
+
     if (messageSent) {
       telnyx.messages
         .create({
@@ -251,7 +251,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
   // console.log(req.body);
-  if (req.body.data.event_type === 'message.received') {
+
+  if (!receiveAlready) {
+    receiveAlready = true;
+  }
+  console.log('Message Received already', receiveAlready);
+  if (req.body.data.event_type === 'message.received' && receiveAlready) {
     const _body = req.body.data.payload.text;
     if (_body) {
       axios({
@@ -260,12 +265,12 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         data: { sms: _body }
       }).then(response => {
         console.log(response.data);
+        receiveAlready = false;
       }).catch(ex => {
         console.error('error', ex);
       })
     }
   }
-
 });
 
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
