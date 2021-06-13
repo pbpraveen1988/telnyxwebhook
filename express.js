@@ -97,7 +97,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     })
 
   } else if (event.data.event_type === 'call.playback.ended') {
-    console.log('playback ended', event);
+   
     if (messageSent) {
       telnyx.messages
         .create({
