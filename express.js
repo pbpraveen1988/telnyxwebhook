@@ -254,10 +254,13 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
 
   if (!receiveAlready) {
     receiveAlready = true;
+  } else {
+    receiveAlready = false;
   }
   console.log('Message Received already', receiveAlready);
   if (req.body.data.event_type === 'message.received' && receiveAlready) {
     const _body = req.body.data.payload.text;
+
     if (_body) {
       axios({
         method: 'post',
@@ -268,6 +271,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         receiveAlready = false;
       }).catch(ex => {
         console.error('error', ex);
+        receiveAlready = false;
       })
     }
   }
