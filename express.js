@@ -15,7 +15,7 @@ const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
 const g_ivr_voice = "female";
 const g_ivr_language = "en-GB";
 let messageSent = false;
-let receiveAlready = false;
+let receiveAlready = true;
 
 log4js.configure({
   appenders: {
@@ -252,13 +252,11 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
   // console.log(req.body);
 
-  if (!receiveAlready) {
-    receiveAlready = true;
-  } else {
-    receiveAlready = false;
-  }
+
+
   console.log('Message Received already', receiveAlready);
   if (req.body.data.event_type === 'message.received' && receiveAlready) {
+    receiveAlready = false;
     const _body = req.body.data.payload.text;
 
     if (_body) {
@@ -268,10 +266,10 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         data: { sms: _body }
       }).then(response => {
         console.log(response.data);
-        receiveAlready = false;
+        receiveAlready = true;
       }).catch(ex => {
         console.error('error', ex);
-        receiveAlready = false;
+        receiveAlready = true;
       })
     }
   }
