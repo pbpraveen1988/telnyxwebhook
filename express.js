@@ -60,9 +60,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   // Call Initiated >> Command Dial
   if (event.data.event_type === 'call.initiated') {
-    // Inbound Call
-    console.log("===========================");
-    console.log('INCOMING CALL INITIATED');
+    // // Inbound Call
+    // console.log("===========================");
+    // console.log('INCOMING CALL INITIATED');
     if (event.data.payload.direction == "incoming") {
       const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
       call.answer();
@@ -72,8 +72,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     // Webhook Dial answered by User - Command Gather Using Speak
   } else if (event.data.event_type == "call.answered") {
-    console.log("===========================");
-    console.log('INCOMING CALL ANSWERED');
+    // console.log("===========================");
+    // console.log('INCOMING CALL ANSWERED');
     userdata = {
       from: event.data.payload.from,
       to: event.data.payload.to
@@ -147,99 +147,99 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 });
 
 
-app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
-  console.log('receive incoming 3');
-  var event;
-  try {
-    event = telnyx.webhooks.constructEvent(
-      // webhook data needs to be passed raw for verification
-      JSON.stringify(req.body, null, 2),
-      req.header('telnyx-signature-ed25519'),
-      req.header('telnyx-timestamp'),
-      publicKey
-    );
-  } catch (e) {
-    // If `constructEvent` throws an error, respond with the message and return.
-    console.log('Error', e.message);
+// app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
+//   console.log('receive incoming 3');
+//   var event;
+//   try {
+//     event = telnyx.webhooks.constructEvent(
+//       // webhook data needs to be passed raw for verification
+//       JSON.stringify(req.body, null, 2),
+//       req.header('telnyx-signature-ed25519'),
+//       req.header('telnyx-timestamp'),
+//       publicKey
+//     );
+//   } catch (e) {
+//     // If `constructEvent` throws an error, respond with the message and return.
+//     console.log('Error', e.message);
 
-    return res.status(400).send('Webhook Error:' + e.message);
-  }
+//     return res.status(400).send('Webhook Error:' + e.message);
+//   }
 
-  /**
-   * Messaging:
-   */
-  if (event.data.event_type === 'message.finalized') {
-    console.log('Message Finalized.Status: ' + event.data.payload.call_control_id);
-  }
+//   /**
+//    * Messaging:
+//    */
+//   if (event.data.event_type === 'message.finalized') {
+//     console.log('Message Finalized.Status: ' + event.data.payload.call_control_id);
+//   }
 
-  /**
-   * Inbound Call Control:
-   * first we listen for an initiation event and then answer the call
-   */
-  if (event.data.event_type === 'call.initiated') {
-    //console.log(event.data);
-    console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
-
-
-  }
-  if (event.data.event_type === 'call.answered') {
-    console.log('Call Answered. Gather audio with the call control id: ' + event.data.payload.call_control_id);
-
-    // const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-
-    console.log('CALL ANSWERED');
-
-    // const { data: call1 } = await telnyx.calls.create({
-    //   connection_id: 'uuid',
-    //   to: '+18327141518',
-    //   from: event.data.payload.from,
-    //   webhook_url: 'http://206.81.2.172:5000/incoming3'
-    // });
-    // console.log('EVENT CALL1', call1);
-    // call1.bridge({ call_control_id: event.data.payload.call_control_id });
-    // call.transfer({ to: '+18327141518' });
-
-    // call.transfer({ to: '+18327141518' });
-    //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
-  }
-
-  if (event.data.event_type === 'call.transferred') {
-    console.log('CALL TRANSFERRED');
-  }
-
-  if (event.data.event_type === 'call.gather.ended') {
-    // console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
-
-    // //const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-    // let l_client_state = {
-    //   clientState: "stage-bridge",
-    //   bridgeId: event.data.payload.call_control_id,
-    // };
-
-    // const gather = new telnyx.Call({
-    //   call_control_id: event.data.payload.call_control_id,
-    // });
-
-    // gather.gather_using_speak({
-    //   payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
-    //   voice: g_ivr_voice,
-    //   language: g_ivr_language,
-    //   valid_digits: "12",
-    //   invalid_payload: "Please, enter the valid input",
-    //   timeout_secs: "30"
-    // });
-
-  }
-  if (event.data.event_type === 'call.hangup') {
-    console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
-  }
+//   /**
+//    * Inbound Call Control:
+//    * first we listen for an initiation event and then answer the call
+//    */
+//   if (event.data.event_type === 'call.initiated') {
+//     //console.log(event.data);
+//     console.log('Call Initiated. Answering call with call control id: ' + event.data.payload.call_control_id);
 
 
-});
+//   }
+//   if (event.data.event_type === 'call.answered') {
+//     console.log('Call Answered. Gather audio with the call control id: ' + event.data.payload.call_control_id);
+
+//     // const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+
+//     console.log('CALL ANSWERED');
+
+//     // const { data: call1 } = await telnyx.calls.create({
+//     //   connection_id: 'uuid',
+//     //   to: '+18327141518',
+//     //   from: event.data.payload.from,
+//     //   webhook_url: 'http://206.81.2.172:5000/incoming3'
+//     // });
+//     // console.log('EVENT CALL1', call1);
+//     // call1.bridge({ call_control_id: event.data.payload.call_control_id });
+//     // call.transfer({ to: '+18327141518' });
+
+//     // call.transfer({ to: '+18327141518' });
+//     //  call.gather_using_audio({audio_url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'});
+//   }
+
+//   if (event.data.event_type === 'call.transferred') {
+//     console.log('CALL TRANSFERRED');
+//   }
+
+//   if (event.data.event_type === 'call.gather.ended') {
+//     // console.log('Call Gathered with Audio. Hanging up call control id: ' + event.data.payload.call_control_id);
+
+//     // //const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+//     // let l_client_state = {
+//     //   clientState: "stage-bridge",
+//     //   bridgeId: event.data.payload.call_control_id,
+//     // };
+
+//     // const gather = new telnyx.Call({
+//     //   call_control_id: event.data.payload.call_control_id,
+//     // });
+
+//     // gather.gather_using_speak({
+//     //   payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
+//     //   voice: g_ivr_voice,
+//     //   language: g_ivr_language,
+//     //   valid_digits: "12",
+//     //   invalid_payload: "Please, enter the valid input",
+//     //   timeout_secs: "30"
+//     // });
+
+//   }
+//   if (event.data.event_type === 'call.hangup') {
+//     console.log('Call Hangup. call control id: ' + event.data.payload.call_control_id);
+//   }
+
+
+// });
 
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   if (req.body.data.event_type === 'message.received') {
     const _body = req.body.data.payload.text;
     if (_body) {
