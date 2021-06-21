@@ -289,7 +289,7 @@ app.use(logger(':method :url :status :req-headers', { stream: accessLogStream })
 
 
 app.listen(7000, function () {
-  console.log('Example app listening on port 5000!');
+  console.log('Example app listening on port 7000!');
 });
 
 
