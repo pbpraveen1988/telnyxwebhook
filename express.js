@@ -10,7 +10,7 @@ const log4js = require('log4js');
 const path = require('path');
 const axios = require('axios');
 
-const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
+const IVRRECEIVEURL3 = 'http://3.142.237.36:7000';
 // TTS Options
 const g_ivr_voice = "female";
 const g_ivr_language = "en-GB";
@@ -288,7 +288,7 @@ logger.token('req-headers', function (req, res) {
 app.use(logger(':method :url :status :req-headers', { stream: accessLogStream }))
 
 
-app.listen(5000, function () {
+app.listen(7000, function () {
   console.log('Example app listening on port 5000!');
 });
 
