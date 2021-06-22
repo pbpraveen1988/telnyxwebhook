@@ -103,7 +103,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         .create({
           from: userdata.to, // Your Telnyx number
           to: userdata.from,
-          text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36`,
+          text: `Please fill out the form by clicking the link, and one of our acquisition specialists will contact you shortly. http://3.142.237.36/cutpowerbill`,
         })
         .then(function (response) {
           messageSent = false;
@@ -265,7 +265,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
     if (_body) {
       axios({
         method: 'post',
-        url: 'http://3.142.237.36/api/users/',
+        url: 'http://3.142.237.36/cutpowerbill/api/users/',
         data: { sms: _body }
       }).then(response => {
         console.log(response.data);
