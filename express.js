@@ -85,6 +85,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       from: event.data.payload.from,
       to: event.data.payload.to
     }
+
+
     // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
@@ -97,7 +99,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     })
 
   } else if (event.data.event_type === 'call.playback.ended') {
-
+    cosnole.log('messageSent', messageSent, userdata, event.data.payload);
     if (messageSent) {
       telnyx.messages
         .create({
