@@ -92,9 +92,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       call_control_id: event.data.payload.call_control_id,
     });
     gather.gather_using_audio({
-      audio_url: 'http://3.142.237.36/assets/dist/file/author.mp3',
+      audio_url: 'http://3.142.237.36/assets/dist/file/solar.mp3',
       valid_digits: "12",
-      invalid_audio_url: "http://3.142.237.36/assets/dist/file/author.mp3",
+      invalid_audio_url: "http://3.142.237.36/assets/dist/file/solar.mp3",
       timeout_secs: "30"
     })
 
