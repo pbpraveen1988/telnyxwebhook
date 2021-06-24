@@ -103,7 +103,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         .create({
           from: userdata.to, // Your Telnyx number
           to: userdata.from,
-          text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote. http://3.142.237.36`,
+          text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote with cash offer for your house!. http://3.142.237.36`,
         })
         .then(function (response) {
           messageSent = false;
