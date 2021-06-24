@@ -263,7 +263,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
   if (req.body.data.event_type === 'message.received' && receiveAlready != req.body.data.id) {
     receiveAlready = req.body.data.payload.text;
     const _body = req.body.data.payload.text;
-
+    console.log('inside if, recieve the message', _body);
     if (_body) {
       axios({
         method: 'post',
