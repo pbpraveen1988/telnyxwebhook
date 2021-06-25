@@ -104,7 +104,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
           .create({
             from: userdata.to, // Your Telnyx number
             to: userdata.from,
-            text : 'I already have your number just give me your name and address and I will send you a quote with cash offer for your house!. http://quoteonhome.com/'
+            text : 'I will send you a quote with cash offer for your house!. http://quoteonhome.com/'
             //text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote with cash offer for your house!. http://quoteonhome.com/`,
           })
           .then(function (response) {
