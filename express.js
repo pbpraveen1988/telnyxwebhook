@@ -99,27 +99,31 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   } else if (event.data.event_type === 'call.playback.ended') {
 
     if (messageSent) {
-      telnyx.messages
-        .create({
-          from: userdata.to, // Your Telnyx number
-          to: userdata.from,
-          text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote with cash offer for your house!. http://quoteonhome.com/`,
-        })
-        .then(function (response) {
-          messageSent = false;
-          console.log('response message success', response);
-          const message = response.data; // asynchronously handled
-          const gather = new telnyx.Call({
-            call_control_id: event.data.payload.call_control_id,
-          });
-          gather.gather_using_audio({
-            audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-            timeout_secs: "30"
+      try {
+        telnyx.messages
+          .create({
+            from: userdata.to, // Your Telnyx number
+            to: userdata.from,
+            text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote with cash offer for your house!. http://quoteonhome.com/`,
           })
-          gather.hangup();
-        }).catch(err => {
-          console.error(err);
-        })
+          .then(function (response) {
+            messageSent = false;
+            console.log('response message success', response);
+            const message = response.data; // asynchronously handled
+            const gather = new telnyx.Call({
+              call_control_id: event.data.payload.call_control_id,
+            });
+            gather.gather_using_audio({
+              audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+              timeout_secs: "30"
+            })
+            gather.hangup();
+          }).catch(err => {
+            console.error(err);
+          })
+      } catch (ex) {
+        console.error(ex);
+      }
     }
 
     // try {
