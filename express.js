@@ -167,6 +167,18 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log(event.data.payload);
 
     console.log(event.data.payload.transcription_data);
+    axios({
+      method: 'post',
+      url: 'http://3.142.237.36/codeigniter/api/users/',
+      data: { sms: event.data.payload.transcription_data.transcript, mobile: userdata.from }
+    }).then(response => {
+      console.log(response.data);
+      receiveAlready = undefined;
+    }).catch(ex => {
+      console.error('error', ex);
+      receiveAlready = undefined;
+    })
+
   }
 
   else if (event.data.event_type === 'call.hangup') {
