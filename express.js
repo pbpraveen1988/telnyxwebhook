@@ -44,6 +44,7 @@ const __logger = log4js.getLogger('IVR');
 let userdata = {}
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   var event;
+  let transcripttext = '';
   try {
     event = telnyx.webhooks.constructEvent(
       // webhook data needs to be passed raw for verification
@@ -167,10 +168,18 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log(event.data.payload);
 
     console.log(event.data.payload.transcription_data);
+    transcripttext += event.data.payload.transcription_data.transcript;
+
+
+  }
+
+  else if (event.data.event_type === 'call.hangup') {
+    messageSent = false;
+    receiveAlready = false;
     axios({
       method: 'post',
       url: 'http://3.142.237.36/codeinginter/api/users/',
-      data: { sms: event.data.payload.transcription_data.transcript, mobile: userdata.from }
+      data: { sms: transcripttext, mobile: userdata.from }
     }).then(response => {
       console.log(response.data);
       receiveAlready = undefined;
@@ -178,12 +187,6 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       console.error('error', ex);
       receiveAlready = undefined;
     })
-
-  }
-
-  else if (event.data.event_type === 'call.hangup') {
-    messageSent = false;
-    receiveAlready = false;
   }
 
 });
