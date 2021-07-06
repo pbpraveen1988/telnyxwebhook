@@ -90,7 +90,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       call_control_id: event.data.payload.call_control_id,
     });
 
-    await gather.gather_using_speak({ payload: 'Please, leave your message after the beep,  thanks', language: 'en-US', voice: 'female' })
+    await gather.gather_using_speak({ payload: 'Please, leave your message,  thanks', language: 'en-US', voice: 'female' })
     try {
       await gather.transcription_start({ language: "en" });
     }
@@ -169,7 +169,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log(event.data.payload.transcription_data);
     axios({
       method: 'post',
-      url: 'http://3.142.237.36/codeigniter/api/users/',
+      url: 'http://3.142.237.36/codeinginter/api/users/',
       data: { sms: event.data.payload.transcription_data.transcript, mobile: userdata.from }
     }).then(response => {
       console.log(response.data);
