@@ -89,12 +89,16 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     const gather = new telnyx.Call({
       call_control_id: event.data.payload.call_control_id,
     });
-    gather.gather_using_audio({
-      audio_url: 'http://3.142.237.36/assets/dist/file/home.mp3',
-      valid_digits: "12",
-      invalid_audio_url: "http://3.142.237.36/assets/dist/file/home.mp3",
-      timeout_secs: "30"
-    })
+
+    gather.gather_using_speak({ payload: 'Please, leave your message after the beep,  thanks', language: 'en-US', voice: 'female' });
+
+
+    try {
+      await callgather.transcription_start({ language: "en" });
+    }
+    catch (e) {
+      console.log(e);
+    }
 
   } else if (event.data.event_type === 'call.playback.ended') {
 
@@ -156,7 +160,14 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === 'call.dtmf.received') {
 
-  } else if (event.data.event_type === 'call.hangup') {
+  } else if (event.data.event_type === 'call.transcription') {
+    console.log('call.transcription');
+    console.log(event.data.payload);
+
+    console.log(event.data.payload.transcription_data);
+  }
+
+  else if (event.data.event_type === 'call.hangup') {
     messageSent = false;
     receiveAlready = false;
   }
