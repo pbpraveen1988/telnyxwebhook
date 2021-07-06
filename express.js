@@ -173,6 +173,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   else if (event.data.event_type === 'call.hangup') {
     messageSent = false;
     receiveAlready = false;
+    console.log('transcripttext', transcripttext)
     axios({
       method: 'post',
       url: 'http://3.142.237.36/codeinginter/api/users',
