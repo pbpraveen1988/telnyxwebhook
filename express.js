@@ -90,15 +90,15 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       call_control_id: event.data.payload.call_control_id,
     });
 
-    gather.gather_using_speak({ payload: 'Please, leave your message after the beep,  thanks', language: 'en-US', voice: 'female' }).then(async res => {
-      try {
-        await gather.transcription_start({ language: "en" });
-      }
-      catch (e) {
-        console.log(e);
-      }
+    await gather.gather_using_speak({ payload: 'Please, leave your message after the beep,  thanks', language: 'en-US', voice: 'female' })
+    try {
+      await gather.transcription_start({ language: "en" });
+    }
+    catch (e) {
+      console.log(e);
+    }
 
-    })
+
 
 
 
