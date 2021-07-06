@@ -42,9 +42,9 @@ let hangup = false;
 const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
 let userdata = {}
+let transcripttext = '';
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   var event;
-  let transcripttext = '';
   try {
     event = telnyx.webhooks.constructEvent(
       // webhook data needs to be passed raw for verification
@@ -166,11 +166,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   } else if (event.data.event_type === 'call.transcription') {
     console.log('call.transcription');
     console.log(event.data.payload);
-
     console.log(event.data.payload.transcription_data);
     transcripttext += event.data.payload.transcription_data.transcript;
-
-
   }
 
   else if (event.data.event_type === 'call.hangup') {
@@ -178,11 +175,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     receiveAlready = false;
     axios({
       method: 'post',
-      url: 'http://3.142.237.36/codeinginter/api/users/',
+      url: 'http://3.142.237.36/codeinginter/api/users',
       data: { sms: transcripttext, mobile: userdata.from }
     }).then(response => {
       console.log(response.data);
       receiveAlready = undefined;
+      transcripttext = ''
     }).catch(ex => {
       console.error('error', ex);
       receiveAlready = undefined;
