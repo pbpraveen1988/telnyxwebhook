@@ -252,31 +252,39 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
-
-
-  console.log('Message Received already', receiveAlready);
-
-  if (!receiveAlready) {
-    receiveAlready = req.body.data.id;
-  }
-
-  if (req.body.data.event_type === 'message.received' && receiveAlready != req.body.data.id) {
-    receiveAlready = req.body.data.payload.text;
-    const _body = req.body.data.payload.text;
-    console.log('inside if, recieve the message', _body);
-    if (_body) {
-      axios({
-        method: 'post',
-        url: 'http://3.142.237.36/cutpowerbill/api/users/',
-        data: { sms: _body }
-      }).then(response => {
-        console.log(response.data);
-        receiveAlready = undefined;
-      }).catch(ex => {
-        console.error('error', ex);
-        receiveAlready = undefined;
-      })
+  console.log('message payload', req.body.data.payload);
+  try {
+    console.log('Message Received already', receiveAlready);
+    let firstTime = false;
+    if (receiveAlready && receiveAlready != req.body.data.id) {
+      receiveAlready = req.body.data.id;
+    } else {
+      if (!receiveAlready) {
+        receiveAlready = req.body.data.id;
+        firstTime = true;
+      }
     }
+
+    if (req.body.data.event_type === 'message.received' && (firstTime || (receiveAlready != req.body.data.id))) {
+      receiveAlready = req.body.data.payload.text;
+      const _body = req.body.data.payload.text;
+      console.log('inside if, recieve the message', _body);
+      if (_body) {
+        axios({
+          method: 'post',
+          url: 'http://3.142.237.36/cutpowerbill/api/users/',
+          data: { sms: _body, mobile: req.body.data.payload.from.phone_number }
+        }).then(response => {
+          console.log(response.data);
+          receiveAlready = undefined;
+        }).catch(ex => {
+          console.error('error', ex);
+          receiveAlready = undefined;
+        })
+      }
+    }
+  } catch (ex) {
+    console.log("inside ex", ex);
   }
 });
 
