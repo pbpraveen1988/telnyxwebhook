@@ -105,7 +105,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         .create({
           from: userdata.to, // Your Telnyx number
           to: userdata.from,
-          text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote that can save your power bill upto 40%. http://3.142.237.36/cutpowerbill`,
+          text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote that can save your power bill upto 40%.`,
         })
         .then(function (response) {
           messageSent = false;
