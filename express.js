@@ -66,8 +66,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // console.log("===========================");
     // console.log('INCOMING CALL INITIATED');
     if (event.data.payload.direction == "incoming") {
-      const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-      call.answer();
+      try {
+        const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+        call.answer();
+      } catch (ex) { }
     } else if (event.data.payload.direction == "outgoing") {
       res.end();
     }
@@ -108,7 +110,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             //
             //I already have your number just give your name and address and will send you a quote with cash offer for your home. http://quoteonhome.com
             //and I will send you a quote with cash offer for your house!  http://quoteonhome.com 
-            text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address.`,
+            text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address and I will send you a quote with cash offer for your house!`,
           })
           .then(function (response) {
             messageSent = false;
@@ -259,30 +261,31 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
 
-
-  console.log('Message Received already', receiveAlready);
-
-  if (!receiveAlready) {
-    receiveAlready = req.body.data.id;
-  }
-
-  if (req.body.data.event_type === 'message.received' && receiveAlready != req.body.data.id) {
-    receiveAlready = req.body.data.payload.text;
-    const _body = req.body.data.payload.text;
-    console.log('inside if, recieve the message', _body);
-    if (_body) {
-      axios({
-        method: 'post',
-        url: 'http://3.142.237.36/api/users/',
-        data: { sms: _body }
-      }).then(response => {
-        console.log(response.data);
-        receiveAlready = undefined;
-      }).catch(ex => {
-        console.error('error', ex);
-        receiveAlready = undefined;
-      })
+  try {
+    console.log('Message Received already', receiveAlready);
+    if (!receiveAlready) {
+      receiveAlready = req.body.data.id;
     }
+    if (req.body.data.event_type === 'message.received' && receiveAlready != req.body.data.id) {
+      receiveAlready = req.body.data.payload.text;
+      const _body = req.body.data.payload.text;
+      console.log('inside if, recieve the message', _body);
+      if (_body) {
+        axios({
+          method: 'post',
+          url: 'http://3.142.237.36/api/users/',
+          data: { sms: _body }
+        }).then(response => {
+          console.log(response.data);
+          receiveAlready = undefined;
+        }).catch(ex => {
+          console.error('error', ex);
+          receiveAlready = undefined;
+        })
+      }
+    }
+  } catch (ex) {
+
   }
 });
 
