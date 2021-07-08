@@ -43,133 +43,141 @@ const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
 let userdata = {}
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
-  var event;
+
   try {
-    event = telnyx.webhooks.constructEvent(
-      // webhook data needs to be passed raw for verification
-      JSON.stringify(req.body, null, 2),
-      req.header('telnyx-signature-ed25519'),
-      req.header('telnyx-timestamp'),
-      publicKey
-    );
-  } catch (e) {
-    // If `constructEvent` throws an error, respond with the message and return.
-    console.log('Error', e.message);
-    return res.status(400).send('Webhook Error:' + e.message);
-  }
 
-  console.log("EVENT TYPE =>", event.data.event_type);
 
-  // Call Initiated >> Command Dial
-  if (event.data.event_type === 'call.initiated') {
-
+    var event;
     try {
-
-
-      // // Inbound Call
-      // console.log("===========================");
-      // console.log('INCOMING CALL INITIATED');
-      if (event.data.payload.direction == "incoming") {
-        try {
-          const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-          call.answer();
-        } catch (ex) { }
-      } else if (event.data.payload.direction == "outgoing") {
-        res.end();
-      }
-    } catch (ex) {
-
+      event = telnyx.webhooks.constructEvent(
+        // webhook data needs to be passed raw for verification
+        JSON.stringify(req.body, null, 2),
+        req.header('telnyx-signature-ed25519'),
+        req.header('telnyx-timestamp'),
+        publicKey
+      );
+    } catch (e) {
+      // If `constructEvent` throws an error, respond with the message and return.
+      console.log('Error', e.message);
+      return res.status(400).send('Webhook Error:' + e.message);
     }
 
-    // Webhook Dial answered by User - Command Gather Using Speak
-  } else if (event.data.event_type == "call.answered") {
-    try {
-      if (!messageSent) {
-        messageSent = true;
-      }
+    console.log("EVENT TYPE =>", event.data.event_type);
 
-      // console.log("===========================");
-      // console.log('INCOMING CALL ANSWERED');
-      userdata = {
-        from: event.data.payload.from,
-        to: event.data.payload.to
-      }
-      // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
-      const gather = new telnyx.Call({
-        call_control_id: event.data.payload.call_control_id,
-      });
-      gather.gather_using_audio({
-        audio_url: 'http://3.142.237.36/assets/dist/file/home.mp3',
-        valid_digits: "12",
-        invalid_audio_url: "http://3.142.237.36/assets/dist/file/home.mp3",
-        timeout_secs: "30"
-      })
-    } catch (ex) { }
-  } else if (event.data.event_type === 'call.playback.ended') {
+    // Call Initiated >> Command Dial
+    if (event.data.event_type === 'call.initiated') {
 
-    if (messageSent) {
       try {
-        telnyx.messages
-          .create({
-            from: userdata.to, // Your Telnyx number
-            to: userdata.from,
-            // text: 'Hey sorry I had to hang up so quickly, '
-            //
-            //I already have your number just give your name and address and will send you a quote with cash offer for your home. http://quoteonhome.com
-            //and I will send you a quote with cash offer for your house!  http://quoteonhome.com 
-            text: `Sorry I had to hang up so quickly. Here is the info you requested. I already have your number, so just leave me your name and address and I will send you a cash offer for your home, to review!`,
-          })
-          .then(function (response) {
-            messageSent = false;
-            console.log('response message success', response);
-            const message = response.data; // asynchronously handled
-            const gather = new telnyx.Call({
-              call_control_id: event.data.payload.call_control_id,
-            });
-            gather.gather_using_audio({
-              audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
-              timeout_secs: "30"
-            })
-            gather.hangup();
-          }).catch(err => {
-            console.error(err);
-          })
+
+
+        // // Inbound Call
+        // console.log("===========================");
+        // console.log('INCOMING CALL INITIATED');
+        if (event.data.payload.direction == "incoming") {
+          try {
+            const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+            call.answer();
+          } catch (ex) { }
+        } else if (event.data.payload.direction == "outgoing") {
+          res.end();
+        }
       } catch (ex) {
-        console.error(ex);
+
       }
+
+      // Webhook Dial answered by User - Command Gather Using Speak
+    } else if (event.data.event_type == "call.answered") {
+      try {
+        if (!messageSent) {
+          messageSent = true;
+        }
+
+        // console.log("===========================");
+        // console.log('INCOMING CALL ANSWERED');
+        userdata = {
+          from: event.data.payload.from,
+          to: event.data.payload.to
+        }
+        // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
+        const gather = new telnyx.Call({
+          call_control_id: event.data.payload.call_control_id,
+        });
+        gather.gather_using_audio({
+          audio_url: 'http://3.142.237.36/assets/dist/file/home.mp3',
+          valid_digits: "12",
+          invalid_audio_url: "http://3.142.237.36/assets/dist/file/home.mp3",
+          timeout_secs: "30"
+        })
+      } catch (ex) { }
+    } else if (event.data.event_type === 'call.playback.ended') {
+
+      if (messageSent) {
+        try {
+          telnyx.messages
+            .create({
+              from: userdata.to, // Your Telnyx number
+              to: userdata.from,
+              // text: 'Hey sorry I had to hang up so quickly, '
+              //
+              //I already have your number just give your name and address and will send you a quote with cash offer for your home. http://quoteonhome.com
+              //and I will send you a quote with cash offer for your house!  http://quoteonhome.com 
+              text: `Sorry I had to hang up so quickly. Here is the info you requested. I already have your number, so just leave me your name and address and I will send you a cash offer for your home, to review!`,
+            })
+            .then(function (response) {
+              messageSent = false;
+              console.log('response message success', response);
+              const message = response.data; // asynchronously handled
+              const gather = new telnyx.Call({
+                call_control_id: event.data.payload.call_control_id,
+              });
+              gather.gather_using_audio({
+                audio_url: 'http://3.142.237.36/assets/dist/file/thanks.mp3',
+                timeout_secs: "30"
+              })
+              gather.hangup();
+            }).catch(err => {
+              console.error(err);
+            })
+        } catch (ex) {
+          console.error(ex);
+        }
+      }
+
+      // try {
+      //   console.log("after audio before speak");
+      //   let l_client_state = {
+      //     clientState: "stage-bridge",
+      //     bridgeId: event.data.payload.call_control_id,
+      //   };
+
+      //   const gather = new telnyx.Call({
+      //     call_control_id: event.data.payload.call_control_id,
+      //   });
+
+      //   gather.gather_using_speak({
+      //     payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
+      //     voice: g_ivr_voice,
+      //     language: g_ivr_language,
+      //     valid_digits: "12",
+      //     invalid_payload: "Please, enter the valid input",
+
+      //     // timeout_secs: "30"
+      //   });
+      // } catch (ex) {
+      //   console.error('ERROR ON CALL PLAYBACK ENDED')
+      //   console.error(ex);
+      // }
+      // gather.hangup();
+      // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
+    } else if (event.data.event_type === 'call.dtmf.received') {
+
+    } else if (event.data.event_type === 'call.hangup') {
+      messageSent = false;
+      receiveAlready = false;
     }
 
-    // try {
-    //   console.log("after audio before speak");
-    //   let l_client_state = {
-    //     clientState: "stage-bridge",
-    //     bridgeId: event.data.payload.call_control_id,
-    //   };
+  } catch (exas) {
 
-    //   const gather = new telnyx.Call({
-    //     call_control_id: event.data.payload.call_control_id,
-    //   });
-
-    //   gather.gather_using_speak({
-    //     payload: "Hello,  Welcome to Quote On home, to continue press 1, press 2 to reject",
-    //     voice: g_ivr_voice,
-    //     language: g_ivr_language,
-    //     valid_digits: "12",
-    //     invalid_payload: "Please, enter the valid input",
-
-    //     // timeout_secs: "30"
-    //   });
-    // } catch (ex) {
-    //   console.error('ERROR ON CALL PLAYBACK ENDED')
-    //   console.error(ex);
-    // }
-    // gather.hangup();
-    // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
-  } else if (event.data.event_type === 'call.dtmf.received') {
-
-  } else if (event.data.event_type === 'call.hangup') {
-    messageSent = false;
-    receiveAlready = false;
   }
 
 });
@@ -292,7 +300,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
       }
     }
   } catch (ex) {
-
+    console.log("inside ex", ex);
   }
 });
 
