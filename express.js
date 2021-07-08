@@ -107,8 +107,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
             // text: 'Hey sorry I had to hang up so quickly, '
             //
             //I already have your number just give your name and address and will send you a quote with cash offer for your home. http://quoteonhome.com
-            //and I will send you a quote with cash offer for your house!
-            text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address. http://quoteonhome.com `,
+            //and I will send you a quote with cash offer for your house!  http://quoteonhome.com 
+            text: `Hey sorry I had to hang up so quickly here is the info you requested, I already have your number just give me your name and address.`,
           })
           .then(function (response) {
             messageSent = false;
