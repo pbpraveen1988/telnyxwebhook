@@ -281,7 +281,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         axios({
           method: 'post',
           url: 'http://3.142.237.36/api/users/',
-          data: { sms: _body }
+          data: { sms: _body, mobile: req.body.data.payload.from.phone_number }
         }).then(response => {
           console.log(response.data);
           receiveAlready = undefined;
