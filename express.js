@@ -62,16 +62,23 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   // Call Initiated >> Command Dial
   if (event.data.event_type === 'call.initiated') {
-    // // Inbound Call
-    // console.log("===========================");
-    // console.log('INCOMING CALL INITIATED');
-    if (event.data.payload.direction == "incoming") {
-      try {
-        const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-        call.answer();
-      } catch (ex) { }
-    } else if (event.data.payload.direction == "outgoing") {
-      res.end();
+
+    try {
+
+
+      // // Inbound Call
+      // console.log("===========================");
+      // console.log('INCOMING CALL INITIATED');
+      if (event.data.payload.direction == "incoming") {
+        try {
+          const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+          call.answer();
+        } catch (ex) { }
+      } else if (event.data.payload.direction == "outgoing") {
+        res.end();
+      }
+    } catch (ex) {
+
     }
 
     // Webhook Dial answered by User - Command Gather Using Speak
@@ -260,7 +267,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
-   console.log(req.body.data.payload);
+  console.log('message payload', req.body.data.payload);
   try {
     console.log('Message Received already', receiveAlready);
     if (!receiveAlready) {
@@ -274,7 +281,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         axios({
           method: 'post',
           url: 'http://3.142.237.36/api/users/',
-          data: { sms: _body  }
+          data: { sms: _body }
         }).then(response => {
           console.log(response.data);
           receiveAlready = undefined;
