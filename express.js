@@ -76,28 +76,28 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
     // Webhook Dial answered by User - Command Gather Using Speak
   } else if (event.data.event_type == "call.answered") {
+    try {
+      if (!messageSent) {
+        messageSent = true;
+      }
 
-    if (!messageSent) {
-      messageSent = true;
-    }
-
-    // console.log("===========================");
-    // console.log('INCOMING CALL ANSWERED');
-    userdata = {
-      from: event.data.payload.from,
-      to: event.data.payload.to
-    }
-    // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
-    const gather = new telnyx.Call({
-      call_control_id: event.data.payload.call_control_id,
-    });
-    gather.gather_using_audio({
-      audio_url: 'http://3.142.237.36/assets/dist/file/home.mp3',
-      valid_digits: "12",
-      invalid_audio_url: "http://3.142.237.36/assets/dist/file/home.mp3",
-      timeout_secs: "30"
-    })
-
+      // console.log("===========================");
+      // console.log('INCOMING CALL ANSWERED');
+      userdata = {
+        from: event.data.payload.from,
+        to: event.data.payload.to
+      }
+      // Gather Using Speak - Present Menu to Forwading destination, 1 to Accept and Bride Call, 2 to Reject and Send to System Voicemail
+      const gather = new telnyx.Call({
+        call_control_id: event.data.payload.call_control_id,
+      });
+      gather.gather_using_audio({
+        audio_url: 'http://3.142.237.36/assets/dist/file/home.mp3',
+        valid_digits: "12",
+        invalid_audio_url: "http://3.142.237.36/assets/dist/file/home.mp3",
+        timeout_secs: "30"
+      })
+    } catch (ex) { }
   } else if (event.data.event_type === 'call.playback.ended') {
 
     if (messageSent) {
@@ -260,7 +260,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 
 app.post('/getmessages', bodyParser.json(), async (req, res) => {
-
+   console.log(req.body.data.payload);
   try {
     console.log('Message Received already', receiveAlready);
     if (!receiveAlready) {
@@ -274,7 +274,7 @@ app.post('/getmessages', bodyParser.json(), async (req, res) => {
         axios({
           method: 'post',
           url: 'http://3.142.237.36/api/users/',
-          data: { sms: _body }
+          data: { sms: _body  }
         }).then(response => {
           console.log(response.data);
           receiveAlready = undefined;
