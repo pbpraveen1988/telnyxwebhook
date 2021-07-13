@@ -76,7 +76,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
         if (event.data.payload.direction == "incoming") {
           try {
             const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-            call.answer();
+            call.answer().catch(err => console.error('got error'));
           } catch (ex) { }
         } else if (event.data.payload.direction == "outgoing") {
           res.end();
