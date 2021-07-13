@@ -121,7 +121,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
               //
               //I already have your number just give your name and address and will send you a quote with cash offer for your home. http://quoteonhome.com
               //and I will send you a quote with cash offer for your house!  http://quoteonhome.com 
-              text: `Sorry I had to hang up so quickly. Here is the info you requested. I already have your number, so just leave me your name and address and I will send you a cash offer for your home, to review! https://tinyurl.com/dx4j9v8b`,
+              text: `Sorry I had to hang up so quickly. Here is the info you requested. I already have your number, so just leave me your name and address and I will send you a cash offer for your home, to review!`,
             })
             .then(function (response) {
               messageSent = false;
