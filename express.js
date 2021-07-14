@@ -92,7 +92,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     });
 
     await gather.gather_using_speak({ payload: 'Please, leave your message,  thanks', language: 'en-US', voice: 'female' })
-    await gather.record_start({ format: 'mp3', channel: 'single' });
+
+    try {
+      await gather.record_start({ format: 'mp3', channel: 'single' });
+    } catch (ex) {
+      console.log(ex);
+    }
     try {
       await gather.transcription_start({ language: "en" });
 
