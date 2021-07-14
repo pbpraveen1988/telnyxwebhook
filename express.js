@@ -92,8 +92,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     });
 
     await gather.gather_using_speak({ payload: 'Please, leave your message,  thanks', language: 'en-US', voice: 'female' })
+    await gather.record_start({ format: 'mp3', channel: 'single' });
     try {
       await gather.transcription_start({ language: "en" });
+
     }
     catch (e) {
       console.log(e);
@@ -168,6 +170,10 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log(event.data.payload);
     console.log(event.data.payload.transcription_data);
     transcripttext += event.data.payload.transcription_data.transcript;
+  } else if (event.data.event_type === 'call.recording.saved') {
+    console.log("call.recording.saved");
+    console.log("====================");
+    console.log(req.body.data.payload);
   }
 
   else if (event.data.event_type === 'call.hangup') {
