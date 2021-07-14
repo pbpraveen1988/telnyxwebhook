@@ -43,6 +43,7 @@ const telnyx = Telnyx(apiKey);
 const __logger = log4js.getLogger('IVR');
 let userdata = {}
 let transcripttext = '';
+let audioUrls = [];
 app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   var event;
   try {
@@ -184,6 +185,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log("call.recording.saved");
     console.log("====================");
     console.log(req.body.data.payload);
+    audioUrls.push(req.body.data.payload.recording_urls.mp3);
   }
 
   else if (event.data.event_type === 'call.hangup') {
@@ -193,11 +195,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     axios({
       method: 'post',
       url: 'http://3.142.237.36/codeinginter/api/users',
-      data: { sms: transcripttext, mobile: userdata.from }
+      data: { sms: transcripttext, mobile: userdata.from, audioUrls: audioUrls }
     }).then(response => {
       console.log(response.data);
       receiveAlready = undefined;
       transcripttext = ''
+      audioUrls = [];
     }).catch(ex => {
       console.error('error', ex);
       receiveAlready = undefined;
