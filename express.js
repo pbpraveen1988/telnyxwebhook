@@ -97,7 +97,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       const gatherCall = new telnyx.Call({
         call_control_id: event.data.payload.call_control_id,
       });
-      await gatherCall.record_start({ format: 'mp3' });
+      await gatherCall.record_start({ format: 'mp3', channels: "single" });
     } catch (ex) {
       console.log(ex);
       console.error(ex.raw);
