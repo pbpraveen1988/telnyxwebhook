@@ -242,7 +242,7 @@ const getAudioUrls = (callControlId, text, mobile) => {
   axios({
     method: 'post',
     url: 'http://3.142.237.36/codeinginter/api/users',
-    data: { sms: text, mobile: mobile, audio_url: audios.join(',') }
+    data: { sms: text, mobile: mobile, audio_url: audios.join(',\n') }
   }).then(response => {
     console.log(response.data);
     transcripttext = '';
