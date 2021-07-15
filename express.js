@@ -9,6 +9,7 @@ const fs = require('fs');
 const log4js = require('log4js');
 const path = require('path');
 const axios = require('axios');
+var os = require("os");
 
 const IVRRECEIVEURL3 = 'http://3.142.237.36:5000';
 // TTS Options
@@ -236,13 +237,13 @@ const getAudioUrls = (callControlId, text, mobile) => {
   }
 
 
-  console.log('audioUrllist', audios.join(',\n'));
+  console.log('audioUrllist', audios.join(',' + os.EOL));
   console.log(userdata.from);
   console.log(text, mobile);
   axios({
     method: 'post',
     url: 'http://3.142.237.36/codeinginter/api/users',
-    data: { sms: text, mobile: mobile, audio_url: audios.join(',\n') }
+    data: { sms: text, mobile: mobile, audio_url: audios.join(',' + os.EOL) }
   }).then(response => {
     console.log(response.data);
     transcripttext = '';
