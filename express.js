@@ -231,11 +231,14 @@ const getAudioUrls = (callControlId, text, mobile) => {
   console.log('getaudio urls', audioUrls);
   let audios = [];
   const audioUrllist = audioUrls.filter(x => x.callId == callControlId);
+  let audioline = '';
   for (let index = 0; index < audioUrllist.length; index++) {
     const element = audioUrllist[index];
     audios.push(element.audio);
+    audioline += "  \n   " + element.audio;
   }
 
+  console.log('audioline', audioline);
 
   console.log('audioUrllist', audios.join("\n"));
   console.log(userdata.from);
@@ -243,7 +246,7 @@ const getAudioUrls = (callControlId, text, mobile) => {
   axios({
     method: 'post',
     url: 'http://3.142.237.36/codeinginter/api/users',
-    data: { sms: text, mobile: mobile, audio_url: audios.join("\n") }
+    data: { sms: text, mobile: mobile, audio_url: audioline }
   }).then(response => {
     console.log(response.data);
     transcripttext = '';
