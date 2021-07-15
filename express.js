@@ -176,6 +176,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     // Webhook client_state set to stage-voicemail-greeting, we are able to execute SPEAK which is acting as our Voicemail Greeting
   } else if (event.data.event_type === 'call.dtmf.received') {
 
+  } if (event.data.event_type === 'call.gather.ended') {
+    res.end();
   } else if (event.data.event_type === 'call.transcription') {
     console.log('call.transcription');
     console.log(event.data.payload);
@@ -191,7 +193,8 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
   else if (event.data.event_type === 'call.hangup') {
     messageSent = false;
     receiveAlready = false;
-    console.log('transcripttext', transcripttext)
+    console.log('transcripttext', transcripttext);
+    console.log('audioUrls', audioUrls);
     // axios({
     //   method: 'post',
     //   url: 'http://3.142.237.36/codeinginter/api/users',
