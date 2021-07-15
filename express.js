@@ -208,7 +208,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log('audioUrls', audioUrls);
     setTimeout(() => getAudioUrls(event.data.payload.call_control_id, transcripttext, userdata.from), 5 * 1000);
     receiveAlready = undefined;
-    transcripttext = ''
+    // transcripttext = ''
     // axios({
     //   method: 'post',
     //   url: 'http://3.142.237.36/codeinginter/api/users',
@@ -242,9 +242,10 @@ const getAudioUrls = (callControlId, text, mobile) => {
   axios({
     method: 'post',
     url: 'http://3.142.237.36/codeinginter/api/users',
-    data: { sms: text, mobile: mobile, audio_url: audioUrllist }
+    data: { sms: text, mobile: mobile, audio_url: audios.join(',') }
   }).then(response => {
     console.log(response.data);
+    transcripttext = '';
   }).catch(ex => {
     console.error('error', ex);
     receiveAlready = undefined;
