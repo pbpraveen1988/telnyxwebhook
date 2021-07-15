@@ -72,8 +72,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
       // console.log("===========================");
       // console.log('INCOMING CALL INITIATED');
       if (event.data.payload.direction == "incoming") {
-        const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-        call.answer();
+        try {
+          const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+          call.answer();
+        } catch (exp) {
+
+        }
       } else if (event.data.payload.direction == "outgoing") {
         res.end();
       }
@@ -202,7 +206,9 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     receiveAlready = false;
     console.log('transcripttext', transcripttext);
     console.log('audioUrls', audioUrls);
-    setTimeout(() => getAudioUrls(event.data.payload.call_control_id), 5 * 1000);
+    setTimeout(() => getAudioUrls(event.data.payload.call_control_id, transcripttext, userdata.from), 5 * 1000);
+    receiveAlready = undefined;
+    transcripttext = ''
     // axios({
     //   method: 'post',
     //   url: 'http://3.142.237.36/codeinginter/api/users',
@@ -220,8 +226,23 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 });
 
 
-const getAudioUrls = (callControlId) => {
+const getAudioUrls = (callControlId, text, mobile) => {
   console.log('getaudio urls', audioUrls);
+  const audioUrllist = audioUrls.filter(x => x.callId == callControlId).join(',');
+
+  console.log('audioUrllist', audioUrllist);
+  axios({
+    method: 'post',
+    url: 'http://3.142.237.36/codeinginter/api/users',
+    data: { sms: transcripttext, mobile: userdata.from, audio_url: audioUrllist }
+  }).then(response => {
+    console.log(response.data);
+
+
+  }).catch(ex => {
+    console.error('error', ex);
+    receiveAlready = undefined;
+  })
 }
 
 // app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
