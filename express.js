@@ -236,7 +236,7 @@ const getAudioUrls = (callControlId, text, mobile) => {
   }
 
 
-  console.log('audioUrllist', audios.join(','));
+  console.log('audioUrllist', audios.join(',\n'));
   console.log(userdata.from);
   console.log(text, mobile);
   axios({
