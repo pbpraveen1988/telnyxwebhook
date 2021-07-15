@@ -206,7 +206,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     receiveAlready = false;
     console.log('transcripttext', transcripttext);
     console.log('audioUrls', audioUrls);
-    setTimeout(() => getAudioUrls(event.data.payload.call_control_id, transcripttext, userdata.from), 5 * 1000);
+    setTimeout(() => getAudioUrls(event.data.payload.call_control_id, transcripttext, userdata.from), 3 * 1000);
     receiveAlready = undefined;
     // transcripttext = ''
     // axios({
