@@ -192,19 +192,19 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     messageSent = false;
     receiveAlready = false;
     console.log('transcripttext', transcripttext)
-    axios({
-      method: 'post',
-      url: 'http://3.142.237.36/codeinginter/api/users',
-      data: { sms: transcripttext, mobile: userdata.from }
-    }).then(response => {
-      console.log(response.data);
-      receiveAlready = undefined;
-      transcripttext = ''
-      audioUrls = [];
-    }).catch(ex => {
-      console.error('error', ex);
-      receiveAlready = undefined;
-    })
+    // axios({
+    //   method: 'post',
+    //   url: 'http://3.142.237.36/codeinginter/api/users',
+    //   data: { sms: transcripttext, mobile: userdata.from }
+    // }).then(response => {
+    //   console.log(response.data);
+    //   receiveAlready = undefined;
+    //   transcripttext = ''
+    //   audioUrls = [];
+    // }).catch(ex => {
+    //   console.error('error', ex);
+    //   receiveAlready = undefined;
+    // })
   }
 
 });
