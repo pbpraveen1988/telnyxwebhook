@@ -228,17 +228,23 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
 const getAudioUrls = (callControlId, text, mobile) => {
   console.log('getaudio urls', audioUrls);
-  const audioUrllist = audioUrls.filter(x => x.callId == callControlId).join(',');
+  let audios = [];
+  const audioUrllist = audioUrls.filter(x => x.callId == callControlId);
+  for (let index = 0; index < audioUrllist.length; index++) {
+    const element = audioUrllist[index];
+    audios.push(element.audio);
+  }
 
-  console.log('audioUrllist', audioUrllist);
+
+  console.log('audioUrllist', audios.join(','));
+  console.log(userdata.from);
+  console.log(text, mobile);
   axios({
     method: 'post',
     url: 'http://3.142.237.36/codeinginter/api/users',
-    data: { sms: transcripttext, mobile: userdata.from, audio_url: audioUrllist }
+    data: { sms: text, mobile: mobile, audio_url: audioUrllist }
   }).then(response => {
     console.log(response.data);
-
-
   }).catch(ex => {
     console.error('error', ex);
     receiveAlready = undefined;
