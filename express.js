@@ -64,14 +64,21 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
 
   // Call Initiated >> Command Dial
   if (event.data.event_type === 'call.initiated') {
-    // // Inbound Call
-    // console.log("===========================");
-    // console.log('INCOMING CALL INITIATED');
-    if (event.data.payload.direction == "incoming") {
-      const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
-      call.answer();
-    } else if (event.data.payload.direction == "outgoing") {
-      res.end();
+
+    try {
+
+
+      // // Inbound Call
+      // console.log("===========================");
+      // console.log('INCOMING CALL INITIATED');
+      if (event.data.payload.direction == "incoming") {
+        const call = new telnyx.Call({ call_control_id: event.data.payload.call_control_id });
+        call.answer();
+      } else if (event.data.payload.direction == "outgoing") {
+        res.end();
+      }
+    } catch (ex) {
+      console.error('Unable to initiate');
     }
 
     // Webhook Dial answered by User - Command Gather Using Speak
@@ -187,7 +194,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     console.log("call.recording.saved");
     console.log("====================");
     console.log(req.body.data.payload);
-    audioUrls.push(req.body.data.payload.recording_urls.mp3);
+    audioUrls.push({ audio: req.body.data.payload.recording_urls.mp3, callId: req.body.data.payload.call_control_id });
   }
 
   else if (event.data.event_type === 'call.hangup') {
@@ -195,6 +202,7 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     receiveAlready = false;
     console.log('transcripttext', transcripttext);
     console.log('audioUrls', audioUrls);
+    setTimeout(() => getAudioUrls(event.data.payload.call_control_id), 5 * 1000);
     // axios({
     //   method: 'post',
     //   url: 'http://3.142.237.36/codeinginter/api/users',
@@ -209,9 +217,12 @@ app.post('/incomingcall', bodyParser.json(), async function (req, res) {
     //   receiveAlready = undefined;
     // })
   }
-
 });
 
+
+const getAudioUrls = (callControlId) => {
+  console.log('getaudio urls', audioUrls);
+}
 
 // app.post('/incomingcall2', bodyParser.json(), async function (req, res) {
 //   console.log('receive incoming 3');
